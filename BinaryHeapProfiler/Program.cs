@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace BinaryHeapProfiler
 {
@@ -10,6 +11,7 @@ namespace BinaryHeapProfiler
     {
         static void Main(string[] args)
         {
+            Stopwatch timekeeper = new Stopwatch();
         }
     }
 
