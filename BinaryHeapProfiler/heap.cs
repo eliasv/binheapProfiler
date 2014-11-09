@@ -8,7 +8,7 @@ namespace BinaryHeapProfiler
 {
     class heap<T> where T : IComparable<T>
     {
-        private T[] nodes;
+        public T[] nodes;
         public ulong length { set; get; } 
         
         public heap()        {  nodes = new T[length]; }
@@ -22,10 +22,10 @@ namespace BinaryHeapProfiler
         public heap(T[] A, ulong N)
         {
             length = N;
-            nodes = new T[N];
-            for(ulong x= 0; x<N; x++)
+            nodes = new T[N+1];
+            for(ulong x= 1; x<N+1; x++)
             {
-                nodes[x] = A[x];
+                nodes[x] = A[x-1];
             }
         }
 
@@ -47,23 +47,40 @@ namespace BinaryHeapProfiler
         private void swap(ulong X, ulong Y)
         {
             T swapspace = nodes[X];
-            X = Y;
+            nodes[X] = nodes[Y];
             nodes[Y] = swapspace;
         }
 
         public void minheapify(ulong index)
         {
-            ulong leftchild, rightchild, smallest;
+            ulong parentnode, leftchild, rightchild, smallest = index;
             leftchild = left(index);
             rightchild = right(index);
-            if ((leftchild < length) & (nodes[leftchild].CompareTo(nodes[index]) < 0))
+            parentnode = parent(index);
+            if ((leftchild <= length) && (nodes[leftchild].CompareTo(nodes[index]) < 0))
                 smallest = leftchild;
-            else smallest = index;
+            if ((rightchild <= length) && (nodes[rightchild].CompareTo(nodes[smallest]) < 0))
+                smallest = rightchild;
+            //else smallest = index;
             if (smallest != index)
             {
                 swap(index, smallest);
-                minheapify(smallest);
+                if(parentnode>0)
+                    minheapify(parent(index));
             }
+        }
+
+        public void buildMinHeap()
+        {
+            for (ulong i= (ulong)((double)length/2); i > 0; i--)
+                minheapify(i);
+        }
+
+        public void print()
+        {
+            for (ulong i = 1; i < length+1; i++)
+                Console.WriteLine(nodes[i]);
+            Console.WriteLine();
         }
     }
 }

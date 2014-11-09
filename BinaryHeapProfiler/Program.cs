@@ -25,6 +25,7 @@ namespace BinaryHeapProfiler
 #endregion
 
 #region Random Array Profiling 
+/*
             for (var p = 0; p < maxPowerN; p++)
             {
                 for (var i = 0; i < N.Length; i++)
@@ -41,22 +42,25 @@ namespace BinaryHeapProfiler
                     timekeeper.Stop();
                     // Profiling ends
                     Table[iterator, 0] = k;
-                    Table[iterator++, 1] = (double)timekeeper.ElapsedMilliseconds / (double)repeats;
+                    Table[iterator++, 1] = (double)timekeeper.ElapsedMilliseconds / ((double)repeats * 1000);
                 }
 
             }
-            printTable(Table, maxPowerN * (10-1), 2);
+
 #endregion
-            #region Heap Profiling: Declaration and Array Initialization copy
-            
+
+
+#region Heap Profiling: Declaration and Array Initialization copy
+
             for (var p = 0; p < maxPowerN; p++)
             {
                 repeats = 0;
                 for (var i = 0; i < N.Length; i++)
                 {
                     k = N[i] * (ulong)(Math.Pow(10, p));
-                    A = new RandomArray<int>(k);  //O(1)
+                    A = new RandomArray<int>(k);  
                     // Profiling Starts
+                    repeats = 0;
                     timekeeper.Restart();
                     while (timekeeper.ElapsedMilliseconds < Tmax)
                     {
@@ -65,12 +69,48 @@ namespace BinaryHeapProfiler
                     }
                     timekeeper.Stop();
                     // Profiling ends
-                    //Table[iterator, 0] = k;  // Data filled on previous profile
-                    Table[iterator++, 2] = (double)timekeeper.ElapsedMilliseconds / (double)repeats;
+                    Table[iterator, 0] = k;  // Data filled on previous profile
+                    Table[iterator++, 2] = (double)timekeeper.ElapsedMilliseconds / ((double)repeats * 1000);
                 }
 
             }
             printTable(Table, maxPowerN * (10 - 1), Cols);
+ */ 
+#endregion
+
+            #region Heap Profiling: Initial heapification of data.
+
+            int[] B = {7,9,8,1,4};
+            H = new heap<int>(B, 5);
+            H.print();
+            H.buildMinHeap();
+            H.print();
+            /*
+            for (var p = 0; p < maxPowerN; p++)
+            {
+                repeats = 0;
+                for (var i = 0; i < N.Length; i++)
+                {
+                    k = N[i] * (ulong)(Math.Pow(10, p));
+                    A = new RandomArray<int>(k);
+                    H = new heap<int>(A.data, k);
+                    // Profiling Starts
+                    repeats = 0;
+                    timekeeper.Restart();
+                    while (timekeeper.ElapsedMilliseconds < Tmax)
+                    {
+                        H.minheapify(0);
+                        repeats++;
+                    }
+                    timekeeper.Stop();
+                    // Profiling ends
+                    Table[iterator, 0] = k;  // Data filled on previous profile
+                    Table[iterator++, 2] = (double)timekeeper.ElapsedMilliseconds / ((double)repeats * 1000);
+                }
+
+            }
+            printTable(Table, maxPowerN * (10 - 1), Cols);
+            */
             #endregion
 
             Console.ReadLine();
