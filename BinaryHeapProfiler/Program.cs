@@ -24,6 +24,7 @@ namespace BinaryHeapProfiler
             heap<int> H;
 #endregion
 
+
 #region Random Array Profiling 
             iterator = 0;
             for (var p = 0; p < maxPowerN; p++)
@@ -49,7 +50,6 @@ namespace BinaryHeapProfiler
 
 #endregion
 
-
 #region Heap Profiling: Declaration and Array Initialization copy
             iterator = 0;
             for (var p = 0; p < maxPowerN; p++)
@@ -69,7 +69,7 @@ namespace BinaryHeapProfiler
                     }
                     timekeeper.Stop();
                     // Profiling ends
-                    Table[iterator, 0] = k;  // Data filled on previous profile
+                    //Table[iterator, 0] = k;  // Data filled on previous profile
                     Table[iterator++, 2] = (double)timekeeper.ElapsedMilliseconds / ((double)repeats * 1000);
                 }
 
@@ -78,7 +78,7 @@ namespace BinaryHeapProfiler
  
 #endregion
 
-            #region Heap Profiling: Initial heapification of data.
+#region Heap Profiling: Initial heapification of data.
 
             iterator = 0;
             for (var p = 0; p < maxPowerN; p++)
@@ -99,15 +99,22 @@ namespace BinaryHeapProfiler
                     }
                     timekeeper.Stop();
                     // Profiling ends
-                    Table[iterator, 0] = k;  // Data filled on previous profile
+                    //Table[iterator, 0] = k;  // Data filled on previous profile
                     Table[iterator++, 3] = (double)timekeeper.ElapsedMilliseconds / ((double)repeats * 1000);
                 }
 
             }
-            printTable(Table, maxPowerN * (10 - 1), Cols);
             
-            #endregion
+            
+#endregion
 
+            /*
+            int[] B = { 9, 7, 8, 1, 4 };
+            H = new heap<int>(B, 5);
+            H.print();
+            H.buildMinHeap();
+            H.print();
+            */
             Console.ReadLine();
         }
 
