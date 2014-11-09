@@ -19,13 +19,13 @@ namespace BinaryHeapProfiler
             ulong[] N = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
             int maxPowerN = 3;
             ulong k, iterator=0;
-            int Cols = 3;
+            int Cols = 4;
             double[,] Table = new double[maxPowerN * (10 - 1), Cols];
             heap<int> H;
 #endregion
 
 #region Random Array Profiling 
-/*
+            iterator = 0;
             for (var p = 0; p < maxPowerN; p++)
             {
                 for (var i = 0; i < N.Length; i++)
@@ -51,7 +51,7 @@ namespace BinaryHeapProfiler
 
 
 #region Heap Profiling: Declaration and Array Initialization copy
-
+            iterator = 0;
             for (var p = 0; p < maxPowerN; p++)
             {
                 repeats = 0;
@@ -75,17 +75,12 @@ namespace BinaryHeapProfiler
 
             }
             printTable(Table, maxPowerN * (10 - 1), Cols);
- */ 
+ 
 #endregion
 
             #region Heap Profiling: Initial heapification of data.
 
-            int[] B = {7,9,8,1,4};
-            H = new heap<int>(B, 5);
-            H.print();
-            H.buildMinHeap();
-            H.print();
-            /*
+            iterator = 0;
             for (var p = 0; p < maxPowerN; p++)
             {
                 repeats = 0;
@@ -99,18 +94,18 @@ namespace BinaryHeapProfiler
                     timekeeper.Restart();
                     while (timekeeper.ElapsedMilliseconds < Tmax)
                     {
-                        H.minheapify(0);
+                        H.buildMinHeap();
                         repeats++;
                     }
                     timekeeper.Stop();
                     // Profiling ends
                     Table[iterator, 0] = k;  // Data filled on previous profile
-                    Table[iterator++, 2] = (double)timekeeper.ElapsedMilliseconds / ((double)repeats * 1000);
+                    Table[iterator++, 3] = (double)timekeeper.ElapsedMilliseconds / ((double)repeats * 1000);
                 }
 
             }
             printTable(Table, maxPowerN * (10 - 1), Cols);
-            */
+            
             #endregion
 
             Console.ReadLine();
