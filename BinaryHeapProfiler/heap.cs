@@ -105,7 +105,7 @@ namespace BinaryHeapProfiler
         /// </summary>
         /// <param name="index">Index of the node for which to extract its parent.</param>
         /// <returns>Index of the parent node given by the input.</returns>
-        public ulong parent(ulong index)       { return (index >> 1);  }
+        private ulong parent(ulong index)       { return (index >> 1);  }
 
         /// <summary>
         /// left(ulong)
@@ -113,7 +113,7 @@ namespace BinaryHeapProfiler
         /// </summary>
         /// <param name="index">Index of the node for which to extract its left child.</param>
         /// <returns>Index of the left child's node given by the input.</returns>
-        public ulong left(ulong index)         { return (index<<1);  }
+        private ulong left(ulong index) { return (index << 1); }
 
         /// <summary>
         /// right(ulong)
@@ -121,7 +121,7 @@ namespace BinaryHeapProfiler
         /// </summary>
         /// <param name="index">Index of the node for which to extract its right child.</param>
         /// <returns>Index of the right child's node given by the input.</returns>
-        public ulong right(ulong index)        { return ((index<<1) + 1); }
+        private ulong right(ulong index) { return ((index << 1) + 1); }
 
         /// <summary>
         /// swap(ulong, ulong)
@@ -198,6 +198,11 @@ namespace BinaryHeapProfiler
             for (ulong i = 1; i < length+1; i++)
                 Console.WriteLine("A[{0}] = {1}",i,nodes[i]);
             Console.WriteLine("------------------");
+        }
+
+        public void insertElement(T newelement)
+        {
+
         }
     }
 }
