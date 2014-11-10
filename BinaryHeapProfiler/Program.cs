@@ -16,22 +16,25 @@ namespace BinaryHeapProfiler
             RandomArray<int> A;
             int repeats = 0;
             long Tmax = 2000;
-            ulong[] N = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+            uint[] N = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
             int maxPowerN = 3;
-            ulong k, iterator=0;
-            int Cols = 4;
+            uint k, iterator=0;
+            int Cols = 5;
             double[,] Table = new double[maxPowerN * (10 - 1), Cols];
             heap<int> H;
 #endregion
 
 
-#region Random Array Profiling 
+
+#region Profiling Code
+            
+            #region Random Array Profiling
             iterator = 0;
             for (var p = 0; p < maxPowerN; p++)
             {
                 for (var i = 0; i < N.Length; i++)
                 {
-                    k = N[i] * (ulong)(Math.Pow(10, p));
+                    k = N[i] * (uint)(Math.Pow(10, p));
                     // Profiling Starts
                     repeats = 0;
                     timekeeper.Restart();
@@ -57,7 +60,7 @@ namespace BinaryHeapProfiler
                 repeats = 0;
                 for (var i = 0; i < N.Length; i++)
                 {
-                    k = N[i] * (ulong)(Math.Pow(10, p));
+                    k = N[i] * (uint)(Math.Pow(10, p));
                     A = new RandomArray<int>(k);  
                     // Profiling Starts
                     repeats = 0;
@@ -74,7 +77,7 @@ namespace BinaryHeapProfiler
                 }
 
             }
-            printTable(Table, maxPowerN * (10 - 1), Cols);
+            
  
 #endregion
 
@@ -86,7 +89,7 @@ namespace BinaryHeapProfiler
                 repeats = 0;
                 for (var i = 0; i < N.Length; i++)
                 {
-                    k = N[i] * (ulong)(Math.Pow(10, p));
+                    k = N[i] * (uint)(Math.Pow(10, p));
                     A = new RandomArray<int>(k);
                     H = new heap<int>(A.data, k);
                     // Profiling Starts
@@ -108,13 +111,46 @@ namespace BinaryHeapProfiler
             
 #endregion
 
+            #region Heap Profiling: Add single element to heap.
+            iterator = 0;
+            for (var p = 0; p < maxPowerN; p++)
+            {
+                repeats = 0;
+                for (var i = 0; i < N.Length; i++)
+                {
+                    k = N[i] * (uint)(Math.Pow(10, p));
+                    A = new RandomArray<int>(k);
+                    H = new heap<int>(A.data, k);
+                    Random randValue = new Random();
+                    H.buildMinHeap();
+                    // Profiling Starts
+                    repeats = 0;
+                    timekeeper.Restart();
+                    while (timekeeper.ElapsedMilliseconds < Tmax)
+                    {
+                        H.insertElement(randValue.Next());
+                        repeats++;
+                    }
+                    timekeeper.Stop();
+                    // Profiling ends
+                    //Table[iterator, 0] = k;  // Data filled on previous profile
+                    Table[iterator++, 4] = (double)timekeeper.ElapsedMilliseconds / ((double)repeats * 1000);
+                }
+
+            }
+#endregion
+
+#endregion
+
             /*
             int[] B = { 9, 7, 8, 1, 4 };
             H = new heap<int>(B, 5);
             H.print();
             H.buildMinHeap();
             H.print();
+            H.insertElement(2);
             */
+            printTable(Table, maxPowerN * (10 - 1), Cols);
             Console.ReadLine();
         }
 

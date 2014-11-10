@@ -42,26 +42,42 @@ namespace BinaryHeapProfiler
     ///         - print()               - Method used to print the heap to the Console. This method is used for 
     ///                                                 debugging and is not meant to be used outside of that 
     ///                                                 purpose.
+    ///         - insertElement()       - Method used to insert an element into the heap. The method heapifies the 
+    ///                                                 parent node in order to maintain the min heap property.
     ///         
     /// </summary>
     /// <typeparam name="T">Any data type T that implements the IComparable interface.</typeparam>
     class heap<T> where T : IComparable<T>
     {
+        // 
+        // Data members
+        //     This section provides the declarations for all the heap data members
+        //     and the necesary objects for the data structure's propper maintenance.
+        //         - nodes:    Array of objects to be used in the heap. It is defined as 
+        //                     array of generics so that it can be extended to any and
+        //                     all objects that implement the IComparable interface.
+        //         - length:   (unsigned int) Used as the delimiter for the active 
+        //                     heap structure.
+        //         - Size:     (unsigned int) Used as the delimiter for the active array
+        //                     used in the heap.
+        // 
+
+
         /// <summary>
-        /// Data members
-        ///     This section provides the declarations for all the heap data members
-        ///     and the necesary objects for the data structure's propper maintenance.
-        ///         - nodes:    array of objects to be used in the heap. It is defined as 
-        ///                     array of generics so that it can be extended to any and
-        ///                     all objects that implement the IComparable interface.
-        ///         - length:   (unsigned long) used as the delimiter for the active 
-        ///                     heap structure.
-        ///         - Size:     (unsigned long) used as the delimiter for the active array
-        ///                     used in the heap.
+        /// nodes:      Array of objects to be used in the heap. It is defined as array of 
+        ///             generics so that it can be extended to any and all objects that 
+        ///             implement the IComparable interface.
         /// </summary>
         public T[] nodes;
-        public ulong length { set; get; }
-        public ulong Size { get; set; }
+        /// <summary>
+        /// length:     (unsigned int) Used as the delimiter for the active heap structure.
+        /// </summary>
+        public uint length { set; get; }
+        /// <summary>
+        /// Size:       (unsigned int) Used as the delimiter for the active array used in 
+        ///             the heap.
+        /// </summary>
+        public uint Size { get; set; }
         /// <summary>
         /// heap()
         ///     Defaut Constructor: Generates an empty heap with a defualt size.
@@ -69,11 +85,11 @@ namespace BinaryHeapProfiler
         public heap() { Size = 50; nodes = new T[Size]; }
 
         /// <summary>
-        /// heap(ulong N)
+        /// heap(uint N)
         ///         Constructor: Generates an empty heap with a given size N.
         /// </summary>
         /// <param name="N">Initial size of the desired heap's array.</param>
-        public heap(ulong N)
+        public heap(uint N)
         {
             length = N;
             Size = N * N;
@@ -81,18 +97,18 @@ namespace BinaryHeapProfiler
         }
 
         /// <summary>
-        /// heap(T[], ulong)
+        /// heap(T[], uint)
         ///         Constructor: Generates a heap from the data in an array. The 
         ///         initial size of the heap is the square of the size of the array 
         ///         in order to allow for the heap to grow as necesary.
         /// </summary>
         /// <param name="A">Data to be used to populate the initial heap array.</param>
         /// <param name="N">Length of array A.</param>
-        public heap(T[] A, ulong N)
+        public heap(T[] A, uint N)
         {
             length = N;
-            Size = N * N;
-            nodes = new T[Size];
+            Size = N ;
+            nodes = new T[Size+1];
             for(ulong x= 1; x<N+1; x++)
             {
                 nodes[x] = A[x-1];
@@ -100,36 +116,36 @@ namespace BinaryHeapProfiler
         }
 
         /// <summary>
-        /// parent(ulong)
+        /// parent(uint)
         ///         Method that determines the the parent of any node in the heap.
         /// </summary>
         /// <param name="index">Index of the node for which to extract its parent.</param>
         /// <returns>Index of the parent node given by the input.</returns>
-        private ulong parent(ulong index)       { return (index >> 1);  }
+        private uint parent(uint index) { return (index >> 1); }
 
         /// <summary>
-        /// left(ulong)
+        /// left(uint)
         ///         Method that determines the the left child of any node in the heap.
         /// </summary>
         /// <param name="index">Index of the node for which to extract its left child.</param>
         /// <returns>Index of the left child's node given by the input.</returns>
-        private ulong left(ulong index) { return (index << 1); }
+        private uint left(uint index) { return (index << 1); }
 
         /// <summary>
-        /// right(ulong)
+        /// right(uint)
         ///         Method that determines the the right child of any node in the heap.
         /// </summary>
         /// <param name="index">Index of the node for which to extract its right child.</param>
         /// <returns>Index of the right child's node given by the input.</returns>
-        private ulong right(ulong index) { return ((index << 1) + 1); }
+        private uint right(uint index) { return ((index << 1) + 1); }
 
         /// <summary>
-        /// swap(ulong, ulong)
+        /// swap(uint, uint)
         ///         Method that swap the data in the heap array for two (2) gived indices.
         /// </summary>
         /// <param name="X">Index of one of the first object to swap in the heap array.</param>
         /// <param name="Y">Index of one of the second object to swap in the heap array.</param>
-        private void swap(ulong X, ulong Y)
+        private void swap(uint X, uint Y)
         {
             T swapspace = nodes[X];
             nodes[X] = nodes[Y];
@@ -139,13 +155,13 @@ namespace BinaryHeapProfiler
         }
 
         /// <summary>
-        /// minHeapify(ulong)
+        /// minHeapify(uint)
         ///         Method that maintains the heap property on any given node.
         /// </summary>
         /// <param name="index">Node in which to maintain the min-heap property.</param>
-        public void minHeapify(ulong index)
+        public void minHeapify(uint index)
         {
-            ulong parentnode, leftchild, rightchild, smallest = index;
+            uint parentnode, leftchild, rightchild, smallest = index;
             leftchild = left(index);
             rightchild = right(index);
             parentnode = parent(index);
@@ -172,13 +188,13 @@ namespace BinaryHeapProfiler
         }
 
         /// <summary>
-        /// buildMinHeap(ulong)
+        /// buildMinHeap(uint)
         ///         Method used for maintaining the heap property of any given node. Given node i, it 
         ///         will verify that the heap property is maintained and will recursively call on itself 
         ///         from the top-down. Uses minHeapify(ulong) to maintain the heap property.
         /// </summary>
         /// <param name="i"></param>
-        private void buildMinHeap(ulong i)
+        private void buildMinHeap(uint i)
         {
             if (left(i).CompareTo(length) < 0)
                 buildMinHeap(left(i));
@@ -200,9 +216,33 @@ namespace BinaryHeapProfiler
             Console.WriteLine("------------------");
         }
 
+        /// <summary>
+        /// insertElement()
+        ///         Method used to insert an element into the heap. The method heapifies the 
+        ///         parent node in order to maintain the min heap property.
+        /// </summary>
+        /// <param name="newelement">New element to be added to the heap.</param>
         public void insertElement(T newelement)
         {
-
+            if (length == Size)
+            {
+                // Need to resize the heap
+                T[] newNodes = new T[2*Size+1];
+                for(var i=0; i<= Size; i++)
+                {
+                    newNodes[i] = nodes[i];
+                }
+                nodes = newNodes;
+                Size *= 2;
+                nodes[++length] = newelement;
+                minHeapify(parent(length));
+            }
+            else
+            {
+                nodes[++length] = newelement;
+                minHeapify(parent(length));
+            }
+                
         }
     }
 }
