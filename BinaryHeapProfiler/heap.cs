@@ -45,6 +45,24 @@ namespace BinaryHeapProfiler
     ///                                                 purpose.
     ///         - insertElement()       - Method used to insert an element into the heap. The method heapifies the 
     ///                                                 parent node in order to maintain the min heap property.
+    ///         - resizeHeap(uint)      - Method to resize the heap array to a new size. The method creates a new
+    ///                                                 array and copies the elements of the old array into it.
+    ///                                                 The new object is then used to replace the old reference.
+    ///         - union(heap)           - Method for the union of two(2) heaps. If the current heap does not 
+    ///                                                 have enough room to hold the second heap, the current 
+    ///                                                 heap is rezied in order for both heaps to be allocated 
+    ///                                                 into the current heap. The data from the second heap is 
+    ///                                                 then copied to the current heap, buildMinHeap is called 
+    ///                                                 to maintain the min heap property.
+    ///         - union(T[])            - Method for the union of a heap with an array of the same data type. 
+    ///                                                 If the current heap does not have enough room to hold 
+    ///                                                 the data from the array, the current heap is rezied in 
+    ///                                                 order for data to be allocated into the current heap. 
+    ///                                                 The data from the array is then copied to the 
+    ///                                                 current heap, buildMinHeap is called to maintain the 
+    ///                                                 min heap property.
+    ///         Method is private because it does not maintain the Min Heap property and 
+    ///         could be used to distabilized the heap.
     ///         
     /// </summary>
     /// <typeparam name="T">Any data type T that implements the IComparable interface.</typeparam>
@@ -245,8 +263,19 @@ namespace BinaryHeapProfiler
                 
         }
 
+        /// <summary>
+        /// resizeHeap(uint)
+        ///         Method to resize the heap array to a new size. The method creates a new 
+        ///         array and copies the elements of the old array into it. The new object 
+        ///         is then used to replace the old reference.
+        ///         
+        ///         Method is private because it does not maintain the Min Heap property and 
+        ///         could be used to distabilized the heap.
+        /// </summary>
+        /// <param name="newSize">New size for the heap's array.</param>
         private void resizeHeap(uint newSize)
         {
+            // Case 1: New array size is larger than current array size.
             if (newSize > Size)
             {
                 T[] newNodes = new T[newSize];
@@ -257,8 +286,24 @@ namespace BinaryHeapProfiler
                 nodes = newNodes;
                 Size = newSize;
             }
+            // Case 2: New array is shorter than current array size.
+            else if (newSize < Size)
+            {
+                length = newSize;
+            }
+            // Case 3: New array size is the same size as current array size.
+            // Nothing to do.
         }
 
+        /// <summary>
+        /// union(heap)
+        ///         Method for the union of two(2) heaps. If the current heap does not 
+        ///         have enough room to hold the second heap, the current heap is rezied
+        ///         in order for both heaps to be allocated into the current heap. The data 
+        ///         from the second heap is the copied to the current heap, buildMinHeap is
+        ///         called to maintain the min heap property.
+        /// </summary>
+        /// <param name="H">Heap object to merge with current heap.</param>
         public void union(heap<T> H)
         {
             if(Size < (length+H.length))
@@ -272,10 +317,27 @@ namespace BinaryHeapProfiler
             buildMinHeap();
 
         }
-
+        /// <summary>
+        /// union(T[])            
+        ///         Method for the union of a heap with an array of the same data type. If the 
+        ///         current heap does not have enough room to hold the data from the array, the 
+        ///         current heap is rezied in order for data to be allocated into the current 
+        ///         heap. The data from the array is then copied to the current heap, buildMinHeap 
+        ///         is called to maintain the min heap property.
+        /// </summary>
+        /// <param name="A">Array with data to merge with current heap.</param>
         public void union(T[] A)
         {
+            uint Alength = (uint)A.Length;
+            if (Size < (length + Alength))
+                resizeHeap(2 * (length + Alength));
 
+            for (uint i = 1; i <= (Alength); i++)
+            {
+                nodes[i + length] = A[i];
+            }
+            length = (length + Alength);
+            buildMinHeap();
         }
     }
 }
