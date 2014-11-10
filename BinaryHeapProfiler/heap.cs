@@ -25,9 +25,10 @@ namespace BinaryHeapProfiler
     ///     The following methods have been implemented:
     ///         - heap()                - Defaut Constructor: Generates an empty heap with a defualt size.
     ///         - heap(ulong)           - Constructor: Generates an empty heap with a given size.
-    ///         - heap(T[], ulong)      - Constructor: Generates a heap from the data in an array. The initial
-    ///                                                size of the heap is the square of the size of the array
-    ///                                                in order to allow for the heap to grow as necesary.
+    ///         - heap(T[], ulong)      - Constructor: Constructor: Generates a heap from the data in an 
+    ///                                             array. The  initial size of the heap is given by the 
+    ///                                             parameter N. IF N is smaller than the input array A, 
+    ///                                             the length of array A is used instead.
     ///         - parent(ulong)         - Method that determines the the parent of any node in the heap.
     ///         - left(ulong)           - Method that determines the the left child of any node in the heap.
     ///         - right(ulong)          - Method that determines the the right child of any node in the heap.
@@ -99,17 +100,22 @@ namespace BinaryHeapProfiler
         /// <summary>
         /// heap(T[], uint)
         ///         Constructor: Generates a heap from the data in an array. The 
-        ///         initial size of the heap is the square of the size of the array 
-        ///         in order to allow for the heap to grow as necesary.
+        ///         initial size of the heap is given by the parameter N. IF N is
+        ///         smaller than the input array A, the length of array A is used 
+        ///         instead.
         /// </summary>
         /// <param name="A">Data to be used to populate the initial heap array.</param>
-        /// <param name="N">Length of array A.</param>
+        /// <param name="N">Initial size of heap.</param>
         public heap(T[] A, uint N)
         {
-            length = N;
-            Size = N ;
+
+            length = (uint)A.Length;
+            if (length <= N)
+                Size = N;
+            else
+                Size = length;
             nodes = new T[Size+1];
-            for(ulong x= 1; x<N+1; x++)
+            for(ulong x= 1; x<(length+1); x++)
             {
                 nodes[x] = A[x-1];
             }
@@ -227,13 +233,7 @@ namespace BinaryHeapProfiler
             if (length == Size)
             {
                 // Need to resize the heap
-                T[] newNodes = new T[2*Size+1];
-                for(var i=0; i<= Size; i++)
-                {
-                    newNodes[i] = nodes[i];
-                }
-                nodes = newNodes;
-                Size *= 2;
+                resizeHeap(2 * Size);
                 nodes[++length] = newelement;
                 minHeapify(parent(length));
             }
@@ -243,6 +243,39 @@ namespace BinaryHeapProfiler
                 minHeapify(parent(length));
             }
                 
+        }
+
+        private void resizeHeap(uint newSize)
+        {
+            if (newSize > Size)
+            {
+                T[] newNodes = new T[newSize];
+                for (var i = 0; i <= Size; i++)
+                {
+                    newNodes[i] = nodes[i];
+                }
+                nodes = newNodes;
+                Size = newSize;
+            }
+        }
+
+        public void union(heap<T> H)
+        {
+            if(Size < (length+H.length))
+                resizeHeap(2 * (length + H.length));
+
+            for (uint i = 1; i <= (H.length); i++)
+            {
+                nodes[i + length] = H.nodes[i];
+            }
+            length = (length + H.length);
+            buildMinHeap();
+
+        }
+
+        public void union(T[] A)
+        {
+
         }
     }
 }

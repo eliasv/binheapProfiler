@@ -1,4 +1,7 @@
-﻿using System;
+﻿//#define DEBUG
+#define PROFILE
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,7 +22,7 @@ namespace BinaryHeapProfiler
             uint[] N = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
             int maxPowerN = 3;
             uint k, iterator=0;
-            int Cols = 5;
+            int Cols = 6;
             double[,] Table = new double[maxPowerN * (10 - 1), Cols];
             heap<int> H;
 #endregion
@@ -27,7 +30,7 @@ namespace BinaryHeapProfiler
 
 
 #region Profiling Code
-            
+#if (PROFILE)           
             #region Random Array Profiling
             iterator = 0;
             for (var p = 0; p < maxPowerN; p++)
@@ -111,7 +114,7 @@ namespace BinaryHeapProfiler
             
 #endregion
 
-            #region Heap Profiling: Add single element to heap.
+#region Heap Profiling: Add single element to heap.
             iterator = 0;
             for (var p = 0; p < maxPowerN; p++)
             {
@@ -138,19 +141,32 @@ namespace BinaryHeapProfiler
                 }
 
             }
-#endregion
-
-#endregion
-
-            /*
-            int[] B = { 9, 7, 8, 1, 4 };
-            H = new heap<int>(B, 5);
-            H.print();
-            H.buildMinHeap();
-            H.print();
-            H.insertElement(2);
-            */
             printTable(Table, maxPowerN * (10 - 1), Cols);
+#endregion
+#endif
+
+#endregion
+
+            #region Testing
+#if (DEBUG)
+            int[] A1 = { 9, 7, 8, 1, 4 };
+            int[] A2 = { 2, 6, 3, 19, 0 };
+            heap<int> H1 = new heap<int>(A1, 5);
+            heap<int> H2 = new heap<int>(A2, 5);
+            Console.WriteLine("****** H1 ******");
+            H1.print();
+            H1.buildMinHeap();
+            H1.print();
+            Console.WriteLine("****** H2 ******");
+            H2.print();
+            H2.buildMinHeap();
+            H2.print();
+            H1.union(H2);
+            Console.WriteLine("****** (H1)U(H2) ******");
+            H1.print();
+#endif
+#endregion 
+            
             Console.ReadLine();
         }
 
