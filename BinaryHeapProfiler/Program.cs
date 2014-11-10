@@ -115,6 +115,10 @@ namespace BinaryHeapProfiler
 #endregion
 
 #region Heap Profiling: Add single element to heap.
+            // TODO: create use cases for possible occurences.
+            //  case 1: add element without heap array resize
+            //  case 2: add element with heap array resize.
+
             iterator = 0;
             for (var p = 0; p < maxPowerN; p++)
             {
@@ -143,6 +147,8 @@ namespace BinaryHeapProfiler
             }
             printTable(Table, maxPowerN * (10 - 1), Cols);
 #endregion
+
+
 #endif
 
 #endregion
