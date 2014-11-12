@@ -1,5 +1,5 @@
-﻿//#define DEBUG
-#define PROFILE
+﻿#define DEBUG
+//#define PROFILE
 
 using System;
 using System.Collections.Generic;
@@ -170,6 +170,10 @@ namespace BinaryHeapProfiler
             H1.union(H2);
             Console.WriteLine("****** (H1)U(H2) ******");
             H1.print();
+            Console.WriteLine("****** (H2)U(H1) ******");
+            H2.union(A1);
+            H2.print();
+            
 #endif
 #endregion 
             

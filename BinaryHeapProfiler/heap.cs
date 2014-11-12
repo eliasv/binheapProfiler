@@ -334,7 +334,7 @@ namespace BinaryHeapProfiler
 
             for (uint i = 1; i <= (Alength); i++)
             {
-                nodes[i + length] = A[i];
+                nodes[i + length] = A[i-1];
             }
             length = (length + Alength);
             buildMinHeap();
