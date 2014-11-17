@@ -66,7 +66,8 @@ namespace BinaryHeapProfiler
     ///         
     /// </summary>
     /// <typeparam name="T">Any data type T that implements the IComparable interface.</typeparam>
-    class heap<T> where T : IComparable<T>
+    class heap<T>   :   IComparable 
+            where T :   IComparable
     {
         // 
         // Data members
@@ -317,6 +318,7 @@ namespace BinaryHeapProfiler
             buildMinHeap();
 
         }
+
         /// <summary>
         /// union(T[])            
         ///         Method for the union of a heap with an array of the same data type. If the 
@@ -338,6 +340,20 @@ namespace BinaryHeapProfiler
             }
             length = (length + Alength);
             buildMinHeap();
+        }
+
+        // Implement IComparable CompareTo method - provide default sort order.
+         int IComparable.CompareTo(object obj)
+        {
+            if (obj == null) return 1;
+            var other = obj as heap<T>;
+            if (other != null)
+            {
+                return this.nodes[0].CompareTo(other.nodes[0]);
+            }
+            else
+                throw new ArgumentException("Object is not a heap<T>.");
+
         }
     }
 }
