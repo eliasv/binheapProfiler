@@ -4,7 +4,7 @@
 //#define PROFILE_DAIC
 //#define PROFILE_IHOD
 #define PROFILE_ASE
-#define PROFILE_ASE_C1
+//#define PROFILE_ASE_C1
 #define PROFILE_ASE_C2
 
 using System;
@@ -13,12 +13,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
-
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace BinaryHeapProfiler
 {
     class Program
     {
+        List<String> ColumnHeaders = new List<string>();
+        List<uint> RowHeaders = new List<uint>();
+        List<List<double>> cellData = new List<List<double>>();
         static void Main(string[] args)
         {
 #region Object and variable Declarations
@@ -27,11 +30,26 @@ namespace BinaryHeapProfiler
             int repeats = 0;
             long Tmax = 2000;
             uint[] N = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-            int maxPowerN = 5;
+            int maxPowerN = 2;
             uint k, iterator=0;
-            int Cols = 8;
+            int Cols = 7;
             double[,] Table = new double[maxPowerN * (10 - 1), Cols];
             heap<int> H;
+            List<String> ColumnHeaders = new List<string>();
+            List<uint> RowHeaders = new List<uint>();
+            List<List<double>> cellData = new List<List<double>>();
+
+            for (var p = 0; p < maxPowerN; p++)
+            {
+                repeats = 0;
+                for (var i = 0; i < N.Length; i++)
+                {
+                    RowHeaders.Add(N[i] * (uint)(Math.Pow(10, p)));
+                    cellData.Add(new List<double>());
+                }
+            }
+            //cellData = new List<List<double>>(RowHeaders.Count);
+            //cellData.Add(new List<double>(RowHeaders.Count));
 #endregion
 
 
@@ -170,6 +188,7 @@ namespace BinaryHeapProfiler
             //Case 2
 #if (PROFILE_ASE_C2)
             Console.WriteLine("Profiling: Add single element to heap : Case 2 : Start");
+            ColumnHeaders.Add("Profiling: Add single element to heap : Case 2");
             iterator = 0;
             for (var p = 0; p < maxPowerN; p++)
             {
@@ -193,6 +212,8 @@ namespace BinaryHeapProfiler
                     // Profiling ends
                     //Table[iterator, 0] = k;  // Data filled on previous profile
                     Table[iterator++, 5] = (double)timekeeper.ElapsedMilliseconds / ((double)repeats * 1000);
+                    cellData.ElementAt(i).Add((double)timekeeper.ElapsedMilliseconds / ((double)repeats * 1000));
+                    
                 }
 
             }
@@ -248,6 +269,28 @@ namespace BinaryHeapProfiler
                 }
                 Console.WriteLine();
             }
+            // Declare Excel object to create table
+            Excel.Application excelApp = new Excel.Application();
+            if (excelApp == null)
+            {
+                Console.WriteLine("Excel is not properly installed!!");
+                return;
+            }
+            Excel.Workbook xlWorkBook;
+            Excel.Worksheet xlWorkSheet;
+            object misValue = System.Reflection.Missing.Value;
+
+            xlWorkBook = excelApp.Workbooks.Add(misValue);
+            xlWorkSheet = (Excel.Worksheet)xlWorkBook.Worksheets.get_Item(1);
+            xlWorkSheet.Cells[1, 1] = "Sheet 1 content";
+            
+            xlWorkBook.SaveAs("csharp-Excel.xls", Excel.XlFileFormat.xlWorkbookNormal);
+            xlWorkBook.Close(true, misValue, misValue);
+            excelApp.Quit();
+
+            releaseObject(xlWorkSheet);
+            releaseObject(xlWorkBook);
+            releaseObject(excelApp);
         }
 
         public static void printElapsedTime(TimeSpan ts)
@@ -263,6 +306,25 @@ namespace BinaryHeapProfiler
                 ts.Milliseconds / 10);
             Console.WriteLine("RunTime " + elapsedTime);
         }
+
+        private static void releaseObject(object obj)
+        {
+            try
+            {
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(obj);
+                obj = null;
+            }
+            catch (Exception ex)
+            {
+                obj = null;
+                Console.WriteLine("Exception Occured while releasing object " + ex.ToString());
+            }
+            finally
+            {
+                GC.Collect();
+            }
+        }
+
     }
 
 
