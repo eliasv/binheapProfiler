@@ -249,10 +249,10 @@ namespace BinaryHeapProfiler
         /// <param name="newelement">New element to be added to the heap.</param>
         public void insertElement(T newelement)
         {
-            if (length == Size)
+            if (length >= (Size-1))
             {
                 // Need to resize the heap
-                uts for long profiling feedback.resizeHeap(2 * Size);
+                resizeHeap(2 * Size);
                 nodes[++length] = newelement;
                 minHeapify(parent(length));
             }
@@ -279,13 +279,13 @@ namespace BinaryHeapProfiler
             // Case 1: New array size is larger than current array size.
             if (newSize > Size)
             {
-                T[] newNodes = new T[newSize];
-                for (var i = 0; i <= Size; i++)
+                T[] newNodes = new T[newSize+1];
+                for (var i = 0; i <= Size-1; i++)
                 {
                     newNodes[i] = nodes[i];
                 }
                 nodes = newNodes;
-                Size = newSize;
+                Size = newSize+1;
             }
             // Case 2: New array is shorter than current array size.
             else if (newSize < Size)
