@@ -252,7 +252,7 @@ namespace BinaryHeapProfiler
             if (length == Size)
             {
                 // Need to resize the heap
-                resizeHeap(2 * Size);
+                uts for long profiling feedback.resizeHeap(2 * Size);
                 nodes[++length] = newelement;
                 minHeapify(parent(length));
             }

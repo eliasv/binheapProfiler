@@ -1,5 +1,5 @@
-﻿#define DEBUG
-//#define PROFILE
+﻿//#define DEBUG
+#define PROFILE
 
 using System;
 using System.Collections.Generic;
@@ -22,7 +22,7 @@ namespace BinaryHeapProfiler
             uint[] N = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
             int maxPowerN = 3;
             uint k, iterator=0;
-            int Cols = 6;
+            int Cols = 20;
             double[,] Table = new double[maxPowerN * (10 - 1), Cols];
             heap<int> H;
 #endregion
@@ -30,8 +30,10 @@ namespace BinaryHeapProfiler
 
 
 #region Profiling Code
-#if (PROFILE)           
+#if (PROFILE)
+            Console.WriteLine("Profiling: Start");
             #region Random Array Profiling
+            Console.WriteLine("Profiling: Random Array Profiling : Start");
             iterator = 0;
             for (var p = 0; p < maxPowerN; p++)
             {
@@ -53,10 +55,11 @@ namespace BinaryHeapProfiler
                 }
 
             }
-
+            Console.WriteLine("Profiling: Random Array Profiling : End");
 #endregion
 
 #region Heap Profiling: Declaration and Array Initialization copy
+            Console.WriteLine("Profiling: Declaration and Array Initialization copy : Start");
             iterator = 0;
             for (var p = 0; p < maxPowerN; p++)
             {
@@ -80,12 +83,12 @@ namespace BinaryHeapProfiler
                 }
 
             }
-            
+            Console.WriteLine("Profiling: Declaration and Array Initialization copy : End");
  
 #endregion
 
 #region Heap Profiling: Initial heapification of data.
-
+            Console.WriteLine("Profiling: Initial heapification of data : Start");
             iterator = 0;
             for (var p = 0; p < maxPowerN; p++)
             {
@@ -110,15 +113,17 @@ namespace BinaryHeapProfiler
                 }
 
             }
-            
+            Console.WriteLine("Profiling: Initial heapification of data : End");
             
 #endregion
 
 #region Heap Profiling: Add single element to heap.
+            Console.WriteLine("Profiling: Add single element to heap : Start");
             // TODO: create use cases for possible occurences.
-            //  case 1: add element without heap array resize
-            //  case 2: add element with heap array resize.
-
+            //  case 1: add element with heap array resize.
+            //  case 2: add element without heap array resize
+            Console.WriteLine("Profiling: Add single element to heap : Case 1 : Start");
+            // Case 1
             iterator = 0;
             for (var p = 0; p < maxPowerN; p++)
             {
@@ -145,6 +150,42 @@ namespace BinaryHeapProfiler
                 }
 
             }
+
+            Console.WriteLine("Profiling: Add single element to heap : Case 1 : End");
+
+            //Case 2
+
+            Console.WriteLine("Profiling: Add single element to heap : Case 2 : Start");
+            iterator = 0;
+            for (var p = 0; p < maxPowerN; p++)
+            {
+                repeats = 0;
+                for (var i = 0; i < N.Length; i++)
+                {
+                    k = N[i] * (uint)(Math.Pow(10, p));
+                    A = new RandomArray<int>(k);
+                    H = new heap<int>(A.data, 2^31);
+                    Random randValue = new Random();
+                    H.buildMinHeap();
+                    // Profiling Starts
+                    repeats = 0;
+                    timekeeper.Restart();
+                    while (timekeeper.ElapsedMilliseconds < Tmax)
+                    {
+                        H.insertElement(randValue.Next());
+                        repeats++;
+                    }
+                    timekeeper.Stop();
+                    // Profiling ends
+                    //Table[iterator, 0] = k;  // Data filled on previous profile
+                    Table[iterator++, 5] = (double)timekeeper.ElapsedMilliseconds / ((double)repeats * 1000);
+                }
+
+            }
+            Console.WriteLine("Profiling: Add single element to heap : Case 2 : End");
+            Console.WriteLine("Profiling: Add single element to heap : End");
+            Console.WriteLine("Profiling: End");
+
             printTable(Table, maxPowerN * (10 - 1), Cols);
 #endregion
 
