@@ -1,11 +1,17 @@
 ﻿//#define DEBUG
 #define PROFILE
-#define PROFILE_RAP
-#define PROFILE_DAIC
-#define PROFILE_IHOD
-#define PROFILE_ASE
-#define PROFILE_ASE_C1
-#define PROFILE_ASE_C2
+//#define PROFILE_RAP
+//#define PROFILE_DAIC
+//#define PROFILE_IHOD
+//#define PROFILE_ASE
+//#define PROFILE_ASE_C1
+//#define PROFILE_ASE_C2
+#define PROFILE_UNION
+#define PROFILE_UNION_C1
+#define PROFILE_UNION_C1a
+//#define PROFILE_UNION_C1b
+//#define PROFILE_UNION_C1c
+//#define PROFILE_UNION_C2
 
 using System;
 using System.Collections.Generic;
@@ -26,7 +32,7 @@ namespace BinaryHeapProfiler
         {
 #region Object and variable Declarations
             Stopwatch timekeeper = new Stopwatch();
-            RandomArray<int> A;
+            RandomArray<int> A, B;
             int repeats = 0;
             long Tmax = 2000;
             uint[] N = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
@@ -34,7 +40,7 @@ namespace BinaryHeapProfiler
             uint iterator=0;
             int Cols = 7;
             double[,] Table = new double[maxPowerN * (10 - 1), Cols];
-            heap<int> H;
+            heap<int> H, H1, H2;
             List<String> ColumnHeaders = new List<string>();
             List<uint> RowHeaders = new List<uint>();
             List<List<double>> cellData = new List<List<double>>();
@@ -79,7 +85,7 @@ namespace BinaryHeapProfiler
 
 #endregion
 
-#region Heap Profiling: Declaration and Array Initialization copy
+            #region Heap Profiling: Declaration and Array Initialization copy
 #if(PROFILE_DAIC)
             Console.WriteLine("Profiling: Declaration and Array Initialization copy : Start");
             ColumnHeaders.Add("Profiling: Declaration and Array Initialization copy");
@@ -135,9 +141,8 @@ namespace BinaryHeapProfiler
             #endregion
 
             #region Heap Profiling: Add single element to heap.
-            Console.WriteLine("Profiling: Add single element to heap : Start");
 #if(PROFILE_ASE)
-            // TODO: create use cases for possible occurences.
+            Console.WriteLine("Profiling: Add single element to heap : Start");
             //  case 1: add element with heap array resize.
             //  case 2: add element without heap array resize
 #if (PROFILE_ASE_C1)
@@ -200,11 +205,88 @@ namespace BinaryHeapProfiler
 #endif
             Console.WriteLine("Profiling: Add single element to heap : End");
 #endif
+#endregion
+            #region Heap Profiling: Union
+#if(PROFILE_UNION)
+            Console.WriteLine("Profiling: Set Union : Start");
+            // Preconditions: 
+            //          No resizing is needed. 
+            //          H1.length + H2.length = N
+            //          H1 and H2 are disjoined sets
+            // Case 1: Union between two heaps
+            // Case 1a: Heap H1 is smaller than Heap H2. Ratio < 1:10
+            // Case 1b: Heap H1 is larger than Heap H2. Ratio > 10:1
+            // Case 1c: Heap H1 is similar in size to Heap H2. Ratio ~ 1:1
+            // Case 2: Union between a heap and an Array
+#if(PROFILE_UNION_C1)
+            Console.WriteLine("Profiling: Set Union : Case 1 : Start");
+#if(PROFILE_UNION_C1a)
+            Console.WriteLine("Profiling: Set Union : Case 1a : Start");
+            ColumnHeaders.Add("Profiling: Add single element to heap : Case 2: add element without heap array resize");
+            iterator = 0;
+            foreach (var k in RowHeaders)
+            {
+                var ratio = k*((new Random().NextDouble())/10+0.05);  // Generate numbers from 0.05*N to 0.15*N
+                uint S1 = (uint)Math.Floor(ratio);
+                uint S2 = k - S1;
+                A = new RandomArray<int>((ulong)S1);
+                B = new RandomArray<int>((ulong)S2);
+                H1 = new heap<int>(A.data, 2 * k);
+                H2 = new heap<int>(B.data, 2 * k);
+                H1.buildMinHeap();
+                H2.buildMinHeap();
+                // Profiling Starts
+                repeats = 0;
+                timekeeper.Restart();
+                while (timekeeper.ElapsedMilliseconds < Tmax)
+                {
+                    H1.union(H2);
+                    repeats++;
+                    // In order to maintain the statistical property for the ratio in the heaps
+                    // a new set of heaps within the ration must be generated. In order to 
+                    // properly measure the union procedure, the clock will pause for the duration 
+                    // of the new set geeration.
+                    timekeeper.Stop();
+                    //    ---------- Stop Timer --------------
+                    ratio = k * ((new Random().NextDouble()) / 10 + 0.05);
+                    S1 = (uint)Math.Floor(ratio);
+                    S2 = k - S1;
+                    A = new RandomArray<int>((ulong)S1);
+                    B = new RandomArray<int>((ulong)S2);
+                    H1 = new heap<int>(A.data, 2 * k);
+                    H2 = new heap<int>(B.data, 2 * k);
+                    H1.buildMinHeap();
+                    H2.buildMinHeap();
+                    //    --------- Start Timer --------------
+                    timekeeper.Start();
+                }
+                timekeeper.Stop();
+                // Profiling ends
+                cellData.ElementAt((int)(iterator++)).Add((double)timekeeper.ElapsedMilliseconds
+                                        / ((double)repeats * 1000));
+                Console.WriteLine("Done: N=" + k.ToString());
+            }
+            Console.WriteLine("Profiling: Set Union : Case 1a : End");
+#endif
+#if(PROFILE_UNION_C1b)
+            Console.WriteLine("Profiling: Set Union : Case 1b : Start");
+            Console.WriteLine("Profiling: Set Union : Case 1b : End");
+#endif
+#if(PROFILE_UNION_C1c)
+            Console.WriteLine("Profiling: Set Union : Case 1c : Start");
+            Console.WriteLine("Profiling: Set Union : Case 1c : End");
+#endif
+            Console.WriteLine("Profiling: Set Union : Case 1: End");
+#endif
+#if(PROFILE_UNION_C2)
+            Console.WriteLine("Profiling: Set Union : Case 2 : Start");
+            Console.WriteLine("Profiling: Set Union : Case 2 : End");
+#endif
+#endif
+            #endregion
             Console.WriteLine("Profiling: End");
 
-            printTable(Table, maxPowerN * (10 - 1), Cols);
-#endregion
-
+            printTable(ColumnHeaders, RowHeaders, cellData);
 
 #endif
 
@@ -214,8 +296,8 @@ namespace BinaryHeapProfiler
 #if (DEBUG)
             int[] A1 = { 9, 7, 8, 1, 4 };
             int[] A2 = { 2, 6, 3, 19, 0 };
-            heap<int> H1 = new heap<int>(A1, 5);
-            heap<int> H2 = new heap<int>(A2, 5);
+            H1 = new heap<int>(A1, 5);
+            H2 = new heap<int>(A2, 5);
             Console.WriteLine("****** H1 ******");
             H1.print();
             H1.buildMinHeap();
@@ -237,8 +319,9 @@ namespace BinaryHeapProfiler
             Console.ReadLine();
         }
 
+
         public static void printTable(  List<String> ColumnHeaders, 
-                                        List<String> RowHeaders,
+                                        List<uint> RowHeaders,
                                         List<List<double>> CellData)
         {
             // Declare Excel object to create table
@@ -277,6 +360,33 @@ namespace BinaryHeapProfiler
                 ts.Hours, ts.Minutes, ts.Seconds,
                 ts.Milliseconds / 10);
             Console.WriteLine("RunTime " + elapsedTime);
+        }
+
+        /// <summary>
+        /// generateHeaps(ref heap<int> H1, ref heap<int> H2, uint N, double r, double stddev)
+        ///         Utility:    Generates two (2) heaps with random lengths, such that N = H1.length + H2.length.
+        ///                     Given r as the ratio of elements of H1:H2, it will generate heaps of varing
+        ///                     lengths within stddev of the specified ratio.
+        /// </summary>
+        /// <param name="H1"></param>
+        /// <param name="H2"></param>
+        /// <param name="N"></param>
+        /// <param name="r"></param>
+        /// <param name="stddev"></param>
+        private static void generateHeaps(ref heap<int> H1, ref heap<int> H2, uint N, double r, double stddev=0.1)
+        {
+            if (stddev < 0 || stddev > 1) throw new ArgumentOutOfRangeException();
+            if (r < 0 || r > (1-stddev)) throw new ArgumentOutOfRangeException();
+
+            var ratio =  ((new Random().NextDouble()) * stddev + r);  // Generate a random ratio (≈ r ± 0.05)
+            uint S1 = (uint)Math.Floor(ratio*N);
+            uint S2 = N - S1;
+            RandomArray<int> A = new RandomArray<int>((ulong)S1);
+            RandomArray<int> B = new RandomArray<int>((ulong)S2);
+            H1 = new heap<int>(A.data, 2 * N);
+            H2 = new heap<int>(B.data, 2 * N);
+            H1.buildMinHeap();
+            H2.buildMinHeap();
         }
 
         private static void releaseObject(object obj)
