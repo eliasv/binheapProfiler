@@ -39,17 +39,14 @@ namespace BinaryHeapProfiler
             List<uint> RowHeaders = new List<uint>();
             List<List<double>> cellData = new List<List<double>>();
 
-            for (var p = 0; p < maxPowerN; p++)
+            for (var p = 0; p <= maxPowerN; p++)
             {
-                repeats = 0;
                 for (var i = 0; i < N.Length; i++)
                 {
                     RowHeaders.Add(N[i] * (uint)(Math.Pow(10, p)));
                     cellData.Add(new List<double>());
                 }
             }
-            //cellData = new List<List<double>>(RowHeaders.Count);
-            //cellData.Add(new List<double>(RowHeaders.Count));
 #endregion
 
 
@@ -61,7 +58,7 @@ namespace BinaryHeapProfiler
 #if (PROFILE_RAP)
             Console.WriteLine("Profiling: Random Array Profiling : Start");
             iterator = 0;
-            for (var p = 0; p < maxPowerN; p++)
+            for (var p = 0; p <= maxPowerN; p++)
             {
                 for (var i = 0; i < N.Length; i++)
                 {
@@ -90,7 +87,7 @@ namespace BinaryHeapProfiler
 #if(PROFILE_DAIC)
             Console.WriteLine("Profiling: Declaration and Array Initialization copy : Start");
             iterator = 0;
-            for (var p = 0; p < maxPowerN; p++)
+            for (var p = 0; p <= maxPowerN; p++)
             {
                 repeats = 0;
                 for (var i = 0; i < N.Length; i++)
@@ -120,7 +117,7 @@ namespace BinaryHeapProfiler
 #if(PROFILE_IHOD)
             Console.WriteLine("Profiling: Initial heapification of data : Start");
             iterator = 0;
-            for (var p = 0; p < maxPowerN; p++)
+            for (var p = 0; p <= maxPowerN; p++)
             {
                 repeats = 0;
                 for (var i = 0; i < N.Length; i++)
@@ -157,7 +154,7 @@ namespace BinaryHeapProfiler
             Console.WriteLine("Profiling: Add single element to heap : Case 1 : Start");
             // Case 1
             iterator = 0;
-            for (var p = 0; p < maxPowerN; p++)
+            for (var p = 0; p <= maxPowerN; p++)
             {
                 repeats = 0;
                 for (var i = 0; i < N.Length; i++)
@@ -190,7 +187,7 @@ namespace BinaryHeapProfiler
             Console.WriteLine("Profiling: Add single element to heap : Case 2 : Start");
             ColumnHeaders.Add("Profiling: Add single element to heap : Case 2");
             iterator = 0;
-            for (var p = 0; p < maxPowerN; p++)
+            for (var p = 0; p <= maxPowerN; p++)
             {
                 repeats = 0;
                 for (var i = 0; i < N.Length; i++)
@@ -211,9 +208,9 @@ namespace BinaryHeapProfiler
                     timekeeper.Stop();
                     // Profiling ends
                     //Table[iterator, 0] = k;  // Data filled on previous profile
-                    Table[iterator++, 5] = (double)timekeeper.ElapsedMilliseconds / ((double)repeats * 1000);
-                    cellData.ElementAt(i).Add((double)timekeeper.ElapsedMilliseconds / ((double)repeats * 1000));
-                    
+                    //Table[iterator++, 5] = (double)timekeeper.ElapsedMilliseconds / ((double)repeats * 1000);
+                    cellData.ElementAt((int)(iterator++)).Add((double)timekeeper.ElapsedMilliseconds / ((double)repeats * 1000));
+                    Console.WriteLine("Done: N=" + k.ToString());
                 }
 
             }
