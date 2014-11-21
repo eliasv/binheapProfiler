@@ -1,10 +1,10 @@
 ﻿//#define DEBUG
 #define PROFILE
-//#define PROFILE_RAP
-//#define PROFILE_DAIC
-//#define PROFILE_IHOD
+#define PROFILE_RAP
+#define PROFILE_DAIC
+#define PROFILE_IHOD
 #define PROFILE_ASE
-//#define PROFILE_ASE_C1
+#define PROFILE_ASE_C1
 #define PROFILE_ASE_C2
 
 using System;
@@ -31,7 +31,7 @@ namespace BinaryHeapProfiler
             long Tmax = 2000;
             uint[] N = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
             int maxPowerN = 2;
-            uint k, iterator=0;
+            uint iterator=0;
             int Cols = 7;
             double[,] Table = new double[maxPowerN * (10 - 1), Cols];
             heap<int> H;
@@ -57,27 +57,23 @@ namespace BinaryHeapProfiler
             #region Random Array Profiling
 #if (PROFILE_RAP)
             Console.WriteLine("Profiling: Random Array Profiling : Start");
+            ColumnHeaders.Add("Profiling: Random Array Profiling");
             iterator = 0;
-            for (var p = 0; p <= maxPowerN; p++)
+            foreach(var k in RowHeaders)
             {
-                for (var i = 0; i < N.Length; i++)
+                repeats = 0;
+                timekeeper.Restart();
+                while (timekeeper.ElapsedMilliseconds < Tmax)
                 {
-                    k = N[i] * (uint)(Math.Pow(10, p));
-                    // Profiling Starts
-                    repeats = 0;
-                    timekeeper.Restart();
-                    while (timekeeper.ElapsedMilliseconds < Tmax)
-                    {
-                        A = new RandomArray<int>(k);
-                        repeats++;
-                    }
-                    timekeeper.Stop();
-                    // Profiling ends
-                    Table[iterator, 0] = k;
-                    Table[iterator++, 1] = (double)timekeeper.ElapsedMilliseconds / ((double)repeats * 1000);
+                    A = new RandomArray<int>(k);
+                    repeats++;
                 }
-
+                timekeeper.Stop();
+                cellData.ElementAt((int)(iterator++)).Add((double)timekeeper.ElapsedMilliseconds 
+                                        / ((double)repeats * 1000));
+                Console.WriteLine("Done: N=" + k.ToString());
             }
+
             Console.WriteLine("Profiling: Random Array Profiling : End");
 #endif
 
@@ -86,29 +82,26 @@ namespace BinaryHeapProfiler
 #region Heap Profiling: Declaration and Array Initialization copy
 #if(PROFILE_DAIC)
             Console.WriteLine("Profiling: Declaration and Array Initialization copy : Start");
+            ColumnHeaders.Add("Profiling: Declaration and Array Initialization copy");
             iterator = 0;
-            for (var p = 0; p <= maxPowerN; p++)
+            foreach (var k in RowHeaders)
             {
+                A = new RandomArray<int>(k);
+                // Profiling Starts
                 repeats = 0;
-                for (var i = 0; i < N.Length; i++)
+                timekeeper.Restart();
+                while (timekeeper.ElapsedMilliseconds < Tmax)
                 {
-                    k = N[i] * (uint)(Math.Pow(10, p));
-                    A = new RandomArray<int>(k);  
-                    // Profiling Starts
-                    repeats = 0;
-                    timekeeper.Restart();
-                    while (timekeeper.ElapsedMilliseconds < Tmax)
-                    {
-                        H = new heap<int>(A.data, k);
-                        repeats++;
-                    }
-                    timekeeper.Stop();
-                    // Profiling ends
-                    //Table[iterator, 0] = k;  // Data filled on previous profile
-                    Table[iterator++, 2] = (double)timekeeper.ElapsedMilliseconds / ((double)repeats * 1000);
+                    H = new heap<int>(A.data, k);
+                    repeats++;
                 }
-
+                timekeeper.Stop();
+                // Profiling ends
+                cellData.ElementAt((int)(iterator++)).Add((double)timekeeper.ElapsedMilliseconds 
+                                        / ((double)repeats * 1000));
+                Console.WriteLine("Done: N=" + k.ToString());
             }
+
             Console.WriteLine("Profiling: Declaration and Array Initialization copy : End");
 #endif
 #endregion
@@ -116,30 +109,27 @@ namespace BinaryHeapProfiler
             #region Heap Profiling: Initial heapification of data.
 #if(PROFILE_IHOD)
             Console.WriteLine("Profiling: Initial heapification of data : Start");
+            ColumnHeaders.Add("Profiling: Initial heapification of data");
             iterator = 0;
-            for (var p = 0; p <= maxPowerN; p++)
+            foreach(var k in RowHeaders)
             {
+                A = new RandomArray<int>(k);
+                H = new heap<int>(A.data, k);
+                // Profiling Starts
                 repeats = 0;
-                for (var i = 0; i < N.Length; i++)
+                timekeeper.Restart();
+                while (timekeeper.ElapsedMilliseconds < Tmax)
                 {
-                    k = N[i] * (uint)(Math.Pow(10, p));
-                    A = new RandomArray<int>(k);
-                    H = new heap<int>(A.data, k);
-                    // Profiling Starts
-                    repeats = 0;
-                    timekeeper.Restart();
-                    while (timekeeper.ElapsedMilliseconds < Tmax)
-                    {
-                        H.buildMinHeap();
-                        repeats++;
-                    }
-                    timekeeper.Stop();
-                    // Profiling ends
-                    //Table[iterator, 0] = k;  // Data filled on previous profile
-                    Table[iterator++, 3] = (double)timekeeper.ElapsedMilliseconds / ((double)repeats * 1000);
+                    H.buildMinHeap();
+                    repeats++;
                 }
-
+                timekeeper.Stop();
+                // Profiling ends
+                cellData.ElementAt((int)(iterator++)).Add((double)timekeeper.ElapsedMilliseconds
+                                        / ((double)repeats * 1000));
+                Console.WriteLine("Done: N=" + k.ToString());
             }
+
             Console.WriteLine("Profiling: Initial heapification of data : End");
 #endif
             #endregion
@@ -152,68 +142,60 @@ namespace BinaryHeapProfiler
             //  case 2: add element without heap array resize
 #if (PROFILE_ASE_C1)
             Console.WriteLine("Profiling: Add single element to heap : Case 1 : Start");
+            ColumnHeaders.Add("Profiling: Add single element to heap : Case 1 : add element with heap array resize");
             // Case 1
             iterator = 0;
-            for (var p = 0; p <= maxPowerN; p++)
+            foreach(var k in RowHeaders)
             {
+                A = new RandomArray<int>(k);
+                H = new heap<int>(A.data, k);
+                Random randValue = new Random();
+                H.buildMinHeap();
+                // Profiling Starts
                 repeats = 0;
-                for (var i = 0; i < N.Length; i++)
+                timekeeper.Restart();
+                while (timekeeper.ElapsedMilliseconds < Tmax)
                 {
-                    k = N[i] * (uint)(Math.Pow(10, p));
-                    A = new RandomArray<int>(k);
-                    H = new heap<int>(A.data, k);
-                    Random randValue = new Random();
-                    H.buildMinHeap();
-                    // Profiling Starts
-                    repeats = 0;
-                    timekeeper.Restart();
-                    while (timekeeper.ElapsedMilliseconds < Tmax)
-                    {
-                        H.insertElement(randValue.Next());
-                        repeats++;
-                    }
-                    timekeeper.Stop();
-                    // Profiling ends
-                    //Table[iterator, 0] = k;  // Data filled on previous profile
-                    Table[iterator++, 4] = (double)timekeeper.ElapsedMilliseconds / ((double)repeats * 1000);
+                    H.insertElement(randValue.Next());
+                    repeats++;
                 }
-
+                timekeeper.Stop();
+                // Profiling ends
+                cellData.ElementAt((int)(iterator++)).Add((double)timekeeper.ElapsedMilliseconds
+                                        / ((double)repeats * 1000));
+                Console.WriteLine("Done: N=" + k.ToString());
             }
+
 
             Console.WriteLine("Profiling: Add single element to heap : Case 1 : End");
 #endif
             //Case 2
 #if (PROFILE_ASE_C2)
             Console.WriteLine("Profiling: Add single element to heap : Case 2 : Start");
-            ColumnHeaders.Add("Profiling: Add single element to heap : Case 2");
+            ColumnHeaders.Add("Profiling: Add single element to heap : Case 2: add element without heap array resize");
             iterator = 0;
-            for (var p = 0; p <= maxPowerN; p++)
+            foreach(var k in RowHeaders)
             {
+                A = new RandomArray<int>(k);
+                H = new heap<int>(A.data, 2 ^ 31);
+                Random randValue = new Random();
+                H.buildMinHeap();
+                // Profiling Starts
                 repeats = 0;
-                for (var i = 0; i < N.Length; i++)
+                timekeeper.Restart();
+                while (timekeeper.ElapsedMilliseconds < Tmax)
                 {
-                    k = N[i] * (uint)(Math.Pow(10, p));
-                    A = new RandomArray<int>(k);
-                    H = new heap<int>(A.data, 2^31);
-                    Random randValue = new Random();
-                    H.buildMinHeap();
-                    // Profiling Starts
-                    repeats = 0;
-                    timekeeper.Restart();
-                    while (timekeeper.ElapsedMilliseconds < Tmax)
-                    {
-                        H.insertElement(randValue.Next());
-                        repeats++;
-                    }
-                    timekeeper.Stop();
-                    // Profiling ends
-                    //Table[iterator, 0] = k;  // Data filled on previous profile
-                    //Table[iterator++, 5] = (double)timekeeper.ElapsedMilliseconds / ((double)repeats * 1000);
-                    cellData.ElementAt((int)(iterator++)).Add((double)timekeeper.ElapsedMilliseconds / ((double)repeats * 1000));
-                    Console.WriteLine("Done: N=" + k.ToString());
+                    H.insertElement(randValue.Next());
+                    repeats++;
                 }
-
+                timekeeper.Stop();
+                // Profiling ends
+                cellData.ElementAt((int)(iterator++)).Add((double)timekeeper.ElapsedMilliseconds
+                                        / ((double)repeats * 1000));
+                Console.WriteLine("Done: N=" + k.ToString());
             }
+
+
             Console.WriteLine("Profiling: Add single element to heap : Case 2 : End");
 #endif
             Console.WriteLine("Profiling: Add single element to heap : End");
@@ -255,17 +237,10 @@ namespace BinaryHeapProfiler
             Console.ReadLine();
         }
 
-        public static void printTable(double[,] A, int MaxColumn1, int MaxColumn2)
+        public static void printTable(  List<String> ColumnHeaders, 
+                                        List<String> RowHeaders,
+                                        List<List<double>> CellData)
         {
-            Console.WriteLine("RunTime:");
-            for (var i = 0; i < MaxColumn1-1; i++)
-            {
-                for (var j = 0; j < MaxColumn2; j++)
-                {
-                    Console.Write("| {0,-10:0.000E+0}", A[i, j]);
-                }
-                Console.WriteLine();
-            }
             // Declare Excel object to create table
             Excel.Application excelApp = new Excel.Application();
             if (excelApp == null)
