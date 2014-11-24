@@ -40,7 +40,9 @@ namespace BinaryHeapProfiler
             uint iterator=0;
             int Cols = 7;
             double[,] Table = new double[maxPowerN * (10 - 1), Cols];
-            heap<int> H, H1, H2;
+            heap<int> H;
+            heap<int> H1 = new heap<int>();
+            heap<int> H2 = new heap<int>();
             List<String> ColumnHeaders = new List<string>();
             List<uint> RowHeaders = new List<uint>();
             List<List<double>> cellData = new List<List<double>>();
@@ -226,15 +228,7 @@ namespace BinaryHeapProfiler
             iterator = 0;
             foreach (var k in RowHeaders)
             {
-                var ratio = k*((new Random().NextDouble())/10+0.05);  // Generate numbers from 0.05*N to 0.15*N
-                uint S1 = (uint)Math.Floor(ratio);
-                uint S2 = k - S1;
-                A = new RandomArray<int>((ulong)S1);
-                B = new RandomArray<int>((ulong)S2);
-                H1 = new heap<int>(A.data, 2 * k);
-                H2 = new heap<int>(B.data, 2 * k);
-                H1.buildMinHeap();
-                H2.buildMinHeap();
+                generateHeaps(ref H1, ref H2, k, 0.1, 0.1);
                 // Profiling Starts
                 repeats = 0;
                 timekeeper.Restart();
@@ -245,18 +239,10 @@ namespace BinaryHeapProfiler
                     // In order to maintain the statistical property for the ratio in the heaps
                     // a new set of heaps within the ration must be generated. In order to 
                     // properly measure the union procedure, the clock will pause for the duration 
-                    // of the new set geeration.
+                    // of the new set generation.
                     timekeeper.Stop();
                     //    ---------- Stop Timer --------------
-                    ratio = k * ((new Random().NextDouble()) / 10 + 0.05);
-                    S1 = (uint)Math.Floor(ratio);
-                    S2 = k - S1;
-                    A = new RandomArray<int>((ulong)S1);
-                    B = new RandomArray<int>((ulong)S2);
-                    H1 = new heap<int>(A.data, 2 * k);
-                    H2 = new heap<int>(B.data, 2 * k);
-                    H1.buildMinHeap();
-                    H2.buildMinHeap();
+                    generateHeaps(ref H1, ref H2, k, 0.1, 0.1);
                     //    --------- Start Timer --------------
                     timekeeper.Start();
                 }
@@ -286,7 +272,7 @@ namespace BinaryHeapProfiler
             #endregion
             Console.WriteLine("Profiling: End");
 
-            printTable(ColumnHeaders, RowHeaders, cellData);
+            //printTable(ColumnHeaders, RowHeaders, cellData);
 
 #endif
 
@@ -368,12 +354,12 @@ namespace BinaryHeapProfiler
         ///                     Given r as the ratio of elements of H1:H2, it will generate heaps of varing
         ///                     lengths within stddev of the specified ratio.
         /// </summary>
-        /// <param name="H1"></param>
-        /// <param name="H2"></param>
-        /// <param name="N"></param>
-        /// <param name="r"></param>
-        /// <param name="stddev"></param>
-        private static void generateHeaps(ref heap<int> H1, ref heap<int> H2, uint N, double r, double stddev=0.1)
+        /// <param name="H1">Reference to Heap H1</param>
+        /// <param name="H2">Reference to Heap H2</param>
+        /// <param name="N">Total number of elements: N = H1.length + H2.length</param>
+        /// <param name="r">Ratio of element paritition, H1:H2, r is between 0 and (1-stddev)</param>
+        /// <param name="stddev">Standard deviation of the random sample ratio.</param>
+        private static void generateHeaps(ref heap<int> H1, ref heap<int> H2, uint N, double r, double stddev=0.5)
         {
             if (stddev < 0 || stddev > 1) throw new ArgumentOutOfRangeException();
             if (r < 0 || r > (1-stddev)) throw new ArgumentOutOfRangeException();
