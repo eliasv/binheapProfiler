@@ -1,16 +1,16 @@
 ﻿//#define DEBUG
 #define PROFILE
-//#define PROFILE_RAP
-//#define PROFILE_DAIC
-//#define PROFILE_IHOD
-//#define PROFILE_ASE
-//#define PROFILE_ASE_C1
-//#define PROFILE_ASE_C2
+#define PROFILE_RAP
+#define PROFILE_DAIC
+#define PROFILE_IHOD
+#define PROFILE_ASE
+#define PROFILE_ASE_C1
+#define PROFILE_ASE_C2
 #define PROFILE_UNION
 #define PROFILE_UNION_C1
 #define PROFILE_UNION_C1a
-//#define PROFILE_UNION_C1b
-//#define PROFILE_UNION_C1c
+#define PROFILE_UNION_C1b
+#define PROFILE_UNION_C1c
 //#define PROFILE_UNION_C2
 
 using System;
@@ -34,19 +34,20 @@ namespace BinaryHeapProfiler
             Stopwatch timekeeper = new Stopwatch();
             RandomArray<int> A, B;
             int repeats = 0;
-            long Tmax = 2000;
+            long Tmax = 500;
             uint[] N = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-            int maxPowerN = 2;
+            int maxPowerN = 5;
             uint iterator=0;
             int Cols = 7;
             double[,] Table = new double[maxPowerN * (10 - 1), Cols];
+            double ratio, stddev;
             heap<int> H;
             heap<int> H1 = new heap<int>();
             heap<int> H2 = new heap<int>();
             List<String> ColumnHeaders = new List<string>();
             List<uint> RowHeaders = new List<uint>();
             List<List<double>> cellData = new List<List<double>>();
-
+            stddev = 0.1;
             for (var p = 0; p <= maxPowerN; p++)
             {
                 for (var i = 0; i < N.Length; i++)
@@ -216,19 +217,21 @@ namespace BinaryHeapProfiler
             //          H1.length + H2.length = N
             //          H1 and H2 are disjoined sets
             // Case 1: Union between two heaps
-            // Case 1a: Heap H1 is smaller than Heap H2. Ratio < 1:10
-            // Case 1b: Heap H1 is larger than Heap H2. Ratio > 10:1
+            // Case 1a: Heap H1 is smaller than Heap H2. Ratio ~ 1:10
+            // Case 1b: Heap H1 is larger than Heap H2. Ratio ~ 10:1
             // Case 1c: Heap H1 is similar in size to Heap H2. Ratio ~ 1:1
             // Case 2: Union between a heap and an Array
 #if(PROFILE_UNION_C1)
             Console.WriteLine("Profiling: Set Union : Case 1 : Start");
 #if(PROFILE_UNION_C1a)
+
             Console.WriteLine("Profiling: Set Union : Case 1a : Start");
-            ColumnHeaders.Add("Profiling: Add single element to heap : Case 2: add element without heap array resize");
+            ColumnHeaders.Add("Profiling: Case 1a: Heap H1 is smaller than Heap H2. Ratio ~ 1:10");
             iterator = 0;
+            ratio = 0.1;
             foreach (var k in RowHeaders)
             {
-                generateHeaps(ref H1, ref H2, k, 0.1, 0.1);
+                generateHeaps(ref H1, ref H2, k, ratio, stddev);
                 // Profiling Starts
                 repeats = 0;
                 timekeeper.Restart();
@@ -242,7 +245,7 @@ namespace BinaryHeapProfiler
                     // of the new set generation.
                     timekeeper.Stop();
                     //    ---------- Stop Timer --------------
-                    generateHeaps(ref H1, ref H2, k, 0.1, 0.1);
+                    generateHeaps(ref H1, ref H2, k, ratio, stddev);
                     //    --------- Start Timer --------------
                     timekeeper.Start();
                 }
@@ -256,10 +259,68 @@ namespace BinaryHeapProfiler
 #endif
 #if(PROFILE_UNION_C1b)
             Console.WriteLine("Profiling: Set Union : Case 1b : Start");
+            ColumnHeaders.Add("Profiling: Case 1b: Heap H1 is larger than Heap H2. Ratio ~ 10:1");
+            iterator = 0;
+            ratio = 0.9;
+            foreach (var k in RowHeaders)
+            {
+                generateHeaps(ref H1, ref H2, k, ratio, stddev);
+                // Profiling Starts
+                repeats = 0;
+                timekeeper.Restart();
+                while (timekeeper.ElapsedMilliseconds < Tmax)
+                {
+                    H1.union(H2);
+                    repeats++;
+                    // In order to maintain the statistical property for the ratio in the heaps
+                    // a new set of heaps within the ration must be generated. In order to 
+                    // properly measure the union procedure, the clock will pause for the duration 
+                    // of the new set generation.
+                    timekeeper.Stop();
+                    //    ---------- Stop Timer --------------
+                    generateHeaps(ref H1, ref H2, k, ratio, stddev);
+                    //    --------- Start Timer --------------
+                    timekeeper.Start();
+                }
+                timekeeper.Stop();
+                // Profiling ends
+                cellData.ElementAt((int)(iterator++)).Add((double)timekeeper.ElapsedMilliseconds
+                                        / ((double)repeats * 1000));
+                Console.WriteLine("Done: N=" + k.ToString());
+            }
             Console.WriteLine("Profiling: Set Union : Case 1b : End");
 #endif
 #if(PROFILE_UNION_C1c)
             Console.WriteLine("Profiling: Set Union : Case 1c : Start");
+                        ColumnHeaders.Add("Profiling: Case 1c: Heap H1 is similar in size to Heap H2. Ratio ~ 1:1");
+            iterator = 0;
+            ratio = 0.5;
+            foreach (var k in RowHeaders)
+            {
+                generateHeaps(ref H1, ref H2, k, ratio, stddev);
+                // Profiling Starts
+                repeats = 0;
+                timekeeper.Restart();
+                while (timekeeper.ElapsedMilliseconds < Tmax)
+                {
+                    H1.union(H2);
+                    repeats++;
+                    // In order to maintain the statistical property for the ratio in the heaps
+                    // a new set of heaps within the ration must be generated. In order to 
+                    // properly measure the union procedure, the clock will pause for the duration 
+                    // of the new set generation.
+                    timekeeper.Stop();
+                    //    ---------- Stop Timer --------------
+                    generateHeaps(ref H1, ref H2, k, ratio, stddev);
+                    //    --------- Start Timer --------------
+                    timekeeper.Start();
+                }
+                timekeeper.Stop();
+                // Profiling ends
+                cellData.ElementAt((int)(iterator++)).Add((double)timekeeper.ElapsedMilliseconds
+                                        / ((double)repeats * 1000));
+                Console.WriteLine("Done: N=" + k.ToString());
+            }
             Console.WriteLine("Profiling: Set Union : Case 1c : End");
 #endif
             Console.WriteLine("Profiling: Set Union : Case 1: End");
@@ -272,7 +333,7 @@ namespace BinaryHeapProfiler
             #endregion
             Console.WriteLine("Profiling: End");
 
-            //printTable(ColumnHeaders, RowHeaders, cellData);
+             printTable(ColumnHeaders, RowHeaders, cellData);
 
 #endif
 
@@ -314,24 +375,42 @@ namespace BinaryHeapProfiler
             Excel.Application excelApp = new Excel.Application();
             if (excelApp == null)
             {
-                Console.WriteLine("Excel is not properly installed!!");
+                Console.WriteLine("Excel is not properly installed. Aborting operation.");
                 return;
             }
-            Excel.Workbook xlWorkBook;
-            Excel.Worksheet xlWorkSheet;
-            object misValue = System.Reflection.Missing.Value;
+         
+                Excel.Workbook xlWorkBook;
+                Excel.Worksheet xlWorkSheet;
+                object misValue = System.Reflection.Missing.Value;
 
-            xlWorkBook = excelApp.Workbooks.Add(misValue);
-            xlWorkSheet = (Excel.Worksheet)xlWorkBook.Worksheets.get_Item(1);
-            xlWorkSheet.Cells[1, 1] = "Sheet 1 content";
+                xlWorkBook = excelApp.Workbooks.Add(misValue);
+                xlWorkSheet = (Excel.Worksheet)xlWorkBook.Worksheets.get_Item(1);
+                xlWorkSheet.Cells[1, 1] = "Data log from Profiling.";
+                int r, c;
+                r = 3; c = 2;
+                foreach (var col in ColumnHeaders)
+                {
+                    xlWorkSheet.Cells[2, c] = ColumnHeaders.ElementAt(c-2);
+                    foreach (var row in RowHeaders)
+                    {
+                        if (c == 2)
+                        {
+                            xlWorkSheet.Cells[r, 1] = RowHeaders.ElementAt(r-3);
+                        }
+                        xlWorkSheet.Cells[r, c] = CellData.ElementAt(r-3).ElementAt(c-2);
+                        r++;
+                    }
+                    r = 3;
+                    c++;
+                }
+                xlWorkBook.SaveAs("csharp-Profiling.xls", Excel.XlFileFormat.xlWorkbookNormal);
+                xlWorkBook.Close(true, misValue, misValue);
+                excelApp.Quit();
+       
+                releaseObject(xlWorkSheet);
+                releaseObject(xlWorkBook);
+                releaseObject(excelApp);
             
-            xlWorkBook.SaveAs("csharp-Excel.xls", Excel.XlFileFormat.xlWorkbookNormal);
-            xlWorkBook.Close(true, misValue, misValue);
-            excelApp.Quit();
-
-            releaseObject(xlWorkSheet);
-            releaseObject(xlWorkBook);
-            releaseObject(excelApp);
         }
 
         public static void printElapsedTime(TimeSpan ts)
@@ -364,7 +443,7 @@ namespace BinaryHeapProfiler
             if (stddev < 0 || stddev > 1) throw new ArgumentOutOfRangeException();
             if (r < 0 || r > (1-stddev)) throw new ArgumentOutOfRangeException();
 
-            var ratio =  ((new Random().NextDouble()) * stddev + r);  // Generate a random ratio (≈ r ± 0.05)
+            var ratio = (((new Random().NextDouble()) - 0.5) * stddev + r);  // Generate a random ratio (≈ r ± stddev/2)
             uint S1 = (uint)Math.Floor(ratio*N);
             uint S2 = N - S1;
             RandomArray<int> A = new RandomArray<int>((ulong)S1);

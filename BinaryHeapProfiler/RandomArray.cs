@@ -23,14 +23,24 @@ namespace BinaryHeapProfiler
             RandomVariable = new Random();
             for (ulong i = 0; i < length; i++)
             {
-                if (typeof(T) == typeof(int))
+                while (repeated(data[i], i))
+                {
+                    if (typeof(T) == typeof(int))
                         data[i] = (T)(Object)RandomVariable.Next();
-                else if(typeof(T) == typeof(double))
+                    else if (typeof(T) == typeof(double))
                         data[i] = (T)(Object)RandomVariable.NextDouble();
-                else
-                    break;
-                
+                    else
+                        break;
+                }
             }
+        }
+
+        private bool repeated(T t, ulong len)
+        {
+            for (ulong i = 0; i < (len); i++)
+                if ((data[i].CompareTo(t))==0) return true;
+            return false;
+
         }
 
        public void print()
