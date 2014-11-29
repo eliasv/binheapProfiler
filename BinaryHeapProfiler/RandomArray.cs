@@ -23,7 +23,7 @@ namespace BinaryHeapProfiler
             RandomVariable = new Random();
             for (ulong i = 0; i < length; i++)
             {
-                while (repeated(data[i], i))
+                do
                 {
                     if (typeof(T) == typeof(int))
                         data[i] = (T)(Object)RandomVariable.Next();
@@ -31,7 +31,7 @@ namespace BinaryHeapProfiler
                         data[i] = (T)(Object)RandomVariable.NextDouble();
                     else
                         break;
-                }
+                } while (repeated(data[i], i));
             }
         }
 

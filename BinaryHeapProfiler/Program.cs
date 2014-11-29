@@ -34,9 +34,9 @@ namespace BinaryHeapProfiler
             Stopwatch timekeeper = new Stopwatch();
             RandomArray<int> A, B;
             int repeats = 0;
-            long Tmax = 500;
+            long Tmax = 2000;
             uint[] N = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-            int maxPowerN = 5;
+            int maxPowerN = 3;
             uint iterator=0;
             int Cols = 7;
             double[,] Table = new double[maxPowerN * (10 - 1), Cols];
@@ -209,8 +209,10 @@ namespace BinaryHeapProfiler
             Console.WriteLine("Profiling: Add single element to heap : End");
 #endif
 #endregion
+            
             #region Heap Profiling: Union
 #if(PROFILE_UNION)
+
             Console.WriteLine("Profiling: Set Union : Start");
             // Preconditions: 
             //          No resizing is needed. 
@@ -331,6 +333,7 @@ namespace BinaryHeapProfiler
 #endif
 #endif
             #endregion
+            
             Console.WriteLine("Profiling: End");
 
              printTable(ColumnHeaders, RowHeaders, cellData);
