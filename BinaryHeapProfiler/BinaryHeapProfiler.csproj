@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BinomialHeap.cs" />
     <Compile Include="BTNode.cs" />
     <Compile Include="heap.cs" />
     <Compile Include="Program.cs" />
