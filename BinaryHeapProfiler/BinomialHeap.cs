@@ -6,11 +6,21 @@ using System.Threading.Tasks;
 
 namespace BinaryHeapProfiler
 {
-    class BinomialHeap<T> where T : IComparable
+    class BinomialHeap<T>   : IComparable 
+                    where T : IComparable
     {
+        
+
+        public void link()
+        {
+
+        }
+
         int calculateDegree(heap<T> BHeap)
         {
-            return (int)Math.Ceiling(Math.Log((double)BHeap.length));
+            return (int)Math.Floor(Math.Log((double)BHeap.length));
         }
+
+
     }
 }

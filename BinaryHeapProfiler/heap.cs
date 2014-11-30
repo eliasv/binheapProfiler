@@ -190,7 +190,6 @@ namespace BinaryHeapProfiler
             leftchild = left(index);
             rightchild = right(index);
             parentnode = parent(index);
-            //Console.WriteLine("minheapifying(" + index + ")");
             if ((leftchild <= length) && (nodes[leftchild].CompareTo(nodes[index]) < 0))
                 smallest = leftchild;
             if ((rightchild <= length) && (nodes[rightchild].CompareTo(nodes[smallest]) < 0))
@@ -216,7 +215,7 @@ namespace BinaryHeapProfiler
         /// buildMinHeap(uint)
         ///         Method used for maintaining the heap property of any given node. Given node i, it 
         ///         will verify that the heap property is maintained and will recursively call on itself 
-        ///         from the top-down. Uses minHeapify(ulong) to maintain the heap property.
+        ///         from the top-down. Uses minHeapify(uint) to maintain the heap property.
         /// </summary>
         /// <param name="i"></param>
         private void buildMinHeap(uint i)
