@@ -34,7 +34,7 @@ namespace BinaryHeapProfiler
             Stopwatch timekeeper = new Stopwatch();
             RandomArray A, B;
             int repeats = 0;
-            long Tmax = 2000;
+            long Tmax = 500;
             uint[] N = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
             int maxPowerN = 3;
             uint iterator=0;
@@ -406,7 +406,14 @@ namespace BinaryHeapProfiler
                     r = 3;
                     c++;
                 }
-                xlWorkBook.SaveAs("csharp-Profiling.xls", Excel.XlFileFormat.xlWorkbookNormal);
+                string now = "(" + System.DateTime.Now.Year.ToString()
+                                 + System.DateTime.Now.Month.ToString()
+                                 + System.DateTime.Now.Day.ToString()
+                                 + System.DateTime.Now.Hour.ToString()
+                                 + System.DateTime.Now.Minute.ToString()
+                                 + System.DateTime.Now.Second.ToString()
+                                 +   ")";
+                xlWorkBook.SaveAs(now+" Profiling.xls", Excel.XlFileFormat.xlWorkbookNormal);
                 xlWorkBook.Close(true, misValue, misValue);
                 excelApp.Quit();
        
