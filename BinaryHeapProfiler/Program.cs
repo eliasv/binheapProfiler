@@ -95,13 +95,13 @@ namespace BinaryHeapProfiler
             iterator = 0;
             foreach (var k in RowHeaders)
             {
-                A = new RandomArray<int>(k);
+                A = new RandomArray(k);
                 // Profiling Starts
                 repeats = 0;
                 timekeeper.Restart();
                 while (timekeeper.ElapsedMilliseconds < Tmax)
                 {
-                    H = new heap<int>(A.data, k);
+                    H = new heap<uint>(A.data, k);
                     repeats++;
                 }
                 timekeeper.Stop();
@@ -122,8 +122,8 @@ namespace BinaryHeapProfiler
             iterator = 0;
             foreach(var k in RowHeaders)
             {
-                A = new RandomArray<int>(k);
-                H = new heap<int>(A.data, k);
+                A = new RandomArray(k);
+                H = new heap<uint>(A.data, k);
                 // Profiling Starts
                 repeats = 0;
                 timekeeper.Restart();
@@ -155,8 +155,8 @@ namespace BinaryHeapProfiler
             iterator = 0;
             foreach(var k in RowHeaders)
             {
-                A = new RandomArray<int>(k);
-                H = new heap<int>(A.data, k);
+                A = new RandomArray(k);
+                H = new heap<uint>(A.data, k);
                 Random randValue = new Random();
                 H.buildMinHeap();
                 // Profiling Starts
@@ -164,7 +164,7 @@ namespace BinaryHeapProfiler
                 timekeeper.Restart();
                 while (timekeeper.ElapsedMilliseconds < Tmax)
                 {
-                    H.insertElement(randValue.Next());
+                    H.insertElement((uint)randValue.Next());
                     repeats++;
                 }
                 timekeeper.Stop();
@@ -184,8 +184,8 @@ namespace BinaryHeapProfiler
             iterator = 0;
             foreach(var k in RowHeaders)
             {
-                A = new RandomArray<int>(k);
-                H = new heap<int>(A.data, 2 ^ 31);
+                A = new RandomArray(k);
+                H = new heap<uint>(A.data, 2 ^ 31);
                 Random randValue = new Random();
                 H.buildMinHeap();
                 // Profiling Starts
@@ -193,7 +193,7 @@ namespace BinaryHeapProfiler
                 timekeeper.Restart();
                 while (timekeeper.ElapsedMilliseconds < Tmax)
                 {
-                    H.insertElement(randValue.Next());
+                    H.insertElement((uint)randValue.Next());
                     repeats++;
                 }
                 timekeeper.Stop();
@@ -438,7 +438,7 @@ namespace BinaryHeapProfiler
         }
 
         /// <summary>
-        /// generateHeaps(ref heap<int> H1, ref heap<int> H2, uint N, double r, double stddev)
+        /// generateHeaps(ref heap<uint> H1, ref heap<uint> H2, uint N, double r, double stddev)
         ///         Utility:    Generates two (2) heaps with random lengths, such that N = H1.length + H2.length.
         ///                     Given r as the ratio of elements of H1:H2, it will generate heaps of varing
         ///                     lengths within stddev of the specified ratio.
