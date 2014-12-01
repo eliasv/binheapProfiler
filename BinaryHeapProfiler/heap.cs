@@ -140,6 +140,32 @@ namespace BinaryHeapProfiler
             }
         }
 
+
+        /// <summary>
+        /// heap(T[], uint, uint, uint)
+        ///         Constructor: Generates a heap from the data in a subarray. The 
+        ///         initial size of the heap is given by the parameter (End-Start). 
+        /// </summary>
+        /// <param name="A">Data to be used to populate the initial heap array.</param>
+        /// <param name="start">First index of the sub array.</param>
+        /// <param name="end">last index of the sub array</param>
+        /// <param name="N">Initial size of heap.</param>
+        public heap(T[] A, uint start, uint end, uint N)
+        {
+            length = (uint)A.Length;
+            if (length < end) 
+                throw new IndexOutOfRangeException("Array is shorter than the final sub array element.");
+            if (length <= N)
+                Size = N;
+            else
+                Size = length;
+            nodes = new T[Size + 1];
+            for (ulong x = 1; x < (end); x++)
+            {
+                nodes[start + x] = A[x - 1];
+            }
+        }
+
         /// <summary>
         /// parent(uint)
         ///         Method that determines the the parent of any node in the heap.

@@ -1,12 +1,12 @@
 ﻿//#define DEBUGING
 #define PROFILE
-#define PROFILE_RAP
-#define PROFILE_DAIC
-#define PROFILE_IHOD
-#define PROFILE_ASE
-#define PROFILE_ASE_C1
-#define PROFILE_ASE_C2
-#define PROFILE_UNION
+//#define PROFILE_RAP
+//#define PROFILE_DAIC
+//#define PROFILE_IHOD
+//#define PROFILE_ASE
+//#define PROFILE_ASE_C1
+//#define PROFILE_ASE_C2
+//#define PROFILE_UNION
 #define PROFILE_UNION_C1
 #define PROFILE_UNION_C1a
 #define PROFILE_UNION_C1b
@@ -456,10 +456,9 @@ namespace BinaryHeapProfiler
             var ratio = (((new Random().NextDouble()) - 0.5) * stddev + r);  // Generate a random ratio (≈ r ± stddev/2)
             uint S1 = (uint)Math.Floor(ratio*N);
             uint S2 = N - S1;
-            RandomArray A = new RandomArray((ulong)S1);
-            RandomArray B = new RandomArray((ulong)S2);
-            H1 = new heap<uint>(A.data, 2 * N);
-            H2 = new heap<uint>(B.data, 2 * N);
+            RandomArray A = new RandomArray((ulong)N);
+            H1 = new heap<uint>(A.data, 0, S1, 2 * N);
+            H2 = new heap<uint>(A.data, S2, N,  2 * N);
             H1.buildMinHeap();
             H2.buildMinHeap();
         }
