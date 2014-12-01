@@ -1,12 +1,12 @@
-﻿//#define DEBUG
+﻿//#define DEBUGING
 #define PROFILE
 #define PROFILE_RAP
-//#define PROFILE_DAIC
-//#define PROFILE_IHOD
-//#define PROFILE_ASE
-//#define PROFILE_ASE_C1
-//#define PROFILE_ASE_C2
-//#define PROFILE_UNION
+#define PROFILE_DAIC
+#define PROFILE_IHOD
+#define PROFILE_ASE
+#define PROFILE_ASE_C1
+#define PROFILE_ASE_C2
+#define PROFILE_UNION
 #define PROFILE_UNION_C1
 #define PROFILE_UNION_C1a
 #define PROFILE_UNION_C1b
@@ -32,7 +32,7 @@ namespace BinaryHeapProfiler
         {
 #region Object and variable Declarations
             Stopwatch timekeeper = new Stopwatch();
-            RandomArray<int> A, B;
+            RandomArray A, B;
             int repeats = 0;
             long Tmax = 2000;
             uint[] N = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
@@ -41,9 +41,9 @@ namespace BinaryHeapProfiler
             int Cols = 7;
             double[,] Table = new double[maxPowerN * (10 - 1), Cols];
             double ratio, stddev;
-            heap<int> H;
-            heap<int> H1 = new heap<int>();
-            heap<int> H2 = new heap<int>();
+            heap<uint> H;
+            heap<uint> H1 = new heap<uint>();
+            heap<uint> H2 = new heap<uint>();
             List<String> ColumnHeaders = new List<string>();
             List<uint> RowHeaders = new List<uint>();
             List<List<double>> cellData = new List<List<double>>();
@@ -74,7 +74,7 @@ namespace BinaryHeapProfiler
                 timekeeper.Restart();
                 while (timekeeper.ElapsedMilliseconds < Tmax)
                 {
-                    A = new RandomArray<int>(k);
+                    A = new RandomArray(k);
                     repeats++;
                 }
                 timekeeper.Stop();
@@ -95,13 +95,13 @@ namespace BinaryHeapProfiler
             iterator = 0;
             foreach (var k in RowHeaders)
             {
-                A = new RandomArray<int>(k);
+                A = new RandomArray(k);
                 // Profiling Starts
                 repeats = 0;
                 timekeeper.Restart();
                 while (timekeeper.ElapsedMilliseconds < Tmax)
                 {
-                    H = new heap<int>(A.data, k);
+                    H = new heap<uint>(A.data, k);
                     repeats++;
                 }
                 timekeeper.Stop();
@@ -122,8 +122,8 @@ namespace BinaryHeapProfiler
             iterator = 0;
             foreach(var k in RowHeaders)
             {
-                A = new RandomArray<int>(k);
-                H = new heap<int>(A.data, k);
+                A = new RandomArray(k);
+                H = new heap<uint>(A.data, k);
                 // Profiling Starts
                 repeats = 0;
                 timekeeper.Restart();
@@ -155,8 +155,8 @@ namespace BinaryHeapProfiler
             iterator = 0;
             foreach(var k in RowHeaders)
             {
-                A = new RandomArray<int>(k);
-                H = new heap<int>(A.data, k);
+                A = new RandomArray(k);
+                H = new heap<uint>(A.data, k);
                 Random randValue = new Random();
                 H.buildMinHeap();
                 // Profiling Starts
@@ -164,7 +164,7 @@ namespace BinaryHeapProfiler
                 timekeeper.Restart();
                 while (timekeeper.ElapsedMilliseconds < Tmax)
                 {
-                    H.insertElement(randValue.Next());
+                    H.insertElement((uint)randValue.Next());
                     repeats++;
                 }
                 timekeeper.Stop();
@@ -184,8 +184,8 @@ namespace BinaryHeapProfiler
             iterator = 0;
             foreach(var k in RowHeaders)
             {
-                A = new RandomArray<int>(k);
-                H = new heap<int>(A.data, 2 ^ 31);
+                A = new RandomArray(k);
+                H = new heap<uint>(A.data, 2 ^ 31);
                 Random randValue = new Random();
                 H.buildMinHeap();
                 // Profiling Starts
@@ -193,7 +193,7 @@ namespace BinaryHeapProfiler
                 timekeeper.Restart();
                 while (timekeeper.ElapsedMilliseconds < Tmax)
                 {
-                    H.insertElement(randValue.Next());
+                    H.insertElement((uint)randValue.Next());
                     repeats++;
                 }
                 timekeeper.Stop();
@@ -343,11 +343,11 @@ namespace BinaryHeapProfiler
 #endregion
 
             #region Testing
-#if (DEBUG)
-            int[] A1 = { 9, 7, 8, 1, 4 };
-            int[] A2 = { 2, 6, 3, 19, 0 };
-            H1 = new heap<int>(A1, 5);
-            H2 = new heap<int>(A2, 5);
+#if (DEBUGING)
+            uint[] A1 = { 9, 7, 8, 1, 4 };
+            uint[] A2 = { 2, 6, 3, 19, 0 };
+            H1 = new heap<uint>(A1, 5);
+            H2 = new heap<uint>(A2, 5);
             Console.WriteLine("****** H1 ******");
             H1.print();
             H1.buildMinHeap();
@@ -431,7 +431,7 @@ namespace BinaryHeapProfiler
         }
 
         /// <summary>
-        /// generateHeaps(ref heap<int> H1, ref heap<int> H2, uint N, double r, double stddev)
+        /// generateHeaps(ref heap<uint> H1, ref heap<uint> H2, uint N, double r, double stddev)
         ///         Utility:    Generates two (2) heaps with random lengths, such that N = H1.length + H2.length.
         ///                     Given r as the ratio of elements of H1:H2, it will generate heaps of varing
         ///                     lengths within stddev of the specified ratio.
@@ -441,7 +441,7 @@ namespace BinaryHeapProfiler
         /// <param name="N">Total number of elements: N = H1.length + H2.length</param>
         /// <param name="r">Ratio of element paritition, H1:H2, r is between 0 and (1-stddev)</param>
         /// <param name="stddev">Standard deviation of the random sample ratio.</param>
-        private static void generateHeaps(ref heap<int> H1, ref heap<int> H2, uint N, double r, double stddev=0.5)
+        private static void generateHeaps(ref heap<uint> H1, ref heap<uint> H2, uint N, double r, double stddev=0.5)
         {
             if (stddev < 0 || stddev > 1) throw new ArgumentOutOfRangeException();
             if (r < 0 || r > (1-stddev)) throw new ArgumentOutOfRangeException();
@@ -449,10 +449,10 @@ namespace BinaryHeapProfiler
             var ratio = (((new Random().NextDouble()) - 0.5) * stddev + r);  // Generate a random ratio (≈ r ± stddev/2)
             uint S1 = (uint)Math.Floor(ratio*N);
             uint S2 = N - S1;
-            RandomArray<int> A = new RandomArray<int>((ulong)S1);
-            RandomArray<int> B = new RandomArray<int>((ulong)S2);
-            H1 = new heap<int>(A.data, 2 * N);
-            H2 = new heap<int>(B.data, 2 * N);
+            RandomArray A = new RandomArray((ulong)S1);
+            RandomArray B = new RandomArray((ulong)S2);
+            H1 = new heap<uint>(A.data, 2 * N);
+            H2 = new heap<uint>(B.data, 2 * N);
             H1.buildMinHeap();
             H2.buildMinHeap();
         }
