@@ -6,7 +6,7 @@
 #define PROFILE_ASE
 #define PROFILE_ASE_C1
 #define PROFILE_ASE_C2
-#define PROFILE_UNION
+//#define PROFILE_UNION
 #define PROFILE_UNION_C1
 #define PROFILE_UNION_C1a
 #define PROFILE_UNION_C1b
