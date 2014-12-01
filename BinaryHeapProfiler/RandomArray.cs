@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace BinaryHeapProfiler
 {
-    class RandomArray<T> where T : IComparable<T>
+    class RandomArray
     {
-        public T[] data;
+        public uint[] data;
         public ulong length { get; set; }
         private Random RandomVariable;
         public object this[int i] 
@@ -19,23 +19,28 @@ namespace BinaryHeapProfiler
         public RandomArray(ulong Size)
         {
             length = Size;
-            data = new T[length];
+            data = new uint[length];
             RandomVariable = new Random();
+            // Generate a list of ordered values
             for (ulong i = 0; i < length; i++)
             {
-                do
-                {
-                    if (typeof(T) == typeof(int))
-                        data[i] = (T)(Object)RandomVariable.Next();
-                    else if (typeof(T) == typeof(double))
-                        data[i] = (T)(Object)RandomVariable.NextDouble();
-                    else
-                        break;
-                } while (repeated(data[i], i));
+                data[i] = (uint)(i + 1);
+            }
+            // Shuffle the values pseudorandomly
+            for (ulong i = 0; i < length; i++)
+            {
+                swap(i, (ulong)RandomVariable.Next(0, (int)(length + 1)));
             }
         }
 
-        private bool repeated(T t, ulong len)
+        private void swap(ulong A, ulong B)
+        {
+            var tmp = data[A];
+            data[A] = data[B];
+            data[B] = tmp;
+        }
+
+        private bool repeated(uint t, ulong len)
         {
             for (ulong i = 0; i < (len); i++)
                 if ((data[i].CompareTo(t))==0) return true;
