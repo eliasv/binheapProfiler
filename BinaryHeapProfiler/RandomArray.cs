@@ -29,7 +29,7 @@ namespace BinaryHeapProfiler
             // Shuffle the values pseudorandomly
             for (ulong i = 0; i < length; i++)
             {
-                swap(i, (ulong)RandomVariable.Next(0, (int)(length + 1)));
+                swap(i, (ulong)RandomVariable.Next(0, (int)(length)));
             }
         }
 
