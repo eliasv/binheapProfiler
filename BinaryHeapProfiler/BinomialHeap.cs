@@ -54,7 +54,7 @@ namespace BinaryHeapProfiler
 
         BinomialHeap<T> Min_Degree(BinomialHeap<T> H1, BinomialHeap<T> H2)
         {
-            if (H1.head().getDegree() < H2.head().getDegree())
+            if (H1.head().getDegree() <= H2.head().getDegree())
                 return H1;
             else
                 return H2;
