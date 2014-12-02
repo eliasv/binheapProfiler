@@ -6,6 +6,14 @@ using System.Threading.Tasks;
 
 namespace BinaryHeapProfiler
 {
+    /// <summary>
+    /// Binomial Heap Data Structured based on CLRS 2nd Edition
+    ///     Implementation by: Elias V. Beauchamp Rodriguez
+    ///                        As a requirement for the course COMP6785
+    ///     A Binomial Heap is a recursive structure that follows the min-heap
+    ///     property.
+    /// </summary>
+    /// <typeparam name="T">Generic data type for the nodes.</typeparam>
     class BinomialHeap<T>   where T : IComparable
     {
         heap<BinomialNode<T>> BHeap;
@@ -20,34 +28,43 @@ namespace BinaryHeapProfiler
 
         
 
-        void Binomial_HeapMerge(BinomialHeap<T> H1, BinomialHeap<T> H2)
+        BinomialHeap<T> Binomial_HeapMerge(BinomialHeap<T> H1, BinomialHeap<T> H2)
         {
             BinomialNode<T> a, b, c;
             a = H1.head();
             b = H2.head();
             H1.head((Min_Degree(H1, H2)).head());
+            // Check in case they are both empty
             if (H1.head() == NIL)
-                return;
+            {
+                H1.head(NIL);
+                return new BinomialHeap<T>(H1);
+            }
+            // If H2 has a lesser degree than <i>a</i>, then swap them.
             if (H1.head() == b)
                 b = a;
             a = H1.head();
             while (b != NIL)
             {
+                // If <i>a</i> has no sibblings then make <i>b</i> its sibbling and we are done.
                 if (a.sibling == NIL)
                 {
                     a.sibling = b;
-                    return;
+                    H1.head(a);
+                    return new BinomialHeap<T>(H1);
                 }
                 else if (a.sibling.getDegree() < b.getDegree())
                     a = a.sibling;
                 else
                 {
-                    c = a.sibling;
+                    c = b.sibling;
                     b.sibling = a.sibling;
                     a.sibling = b;
+                    a = a.sibling;
                     b = c;
                 }
             }
+            return new BinomialHeap<T>(H1);
         }
 
 

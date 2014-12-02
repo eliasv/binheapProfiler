@@ -6,11 +6,22 @@ using System.Threading.Tasks;
 
 namespace BinaryHeapProfiler
 {
+    /// <summary>
+    /// Support class that generates random sets of values. The arrays
+    /// contain numbers from 1 to N. In order to properly randomize the 
+    /// array, it is randomly index swapped.
+    /// 
+    ///         Data members:
+    ///             - data
+    ///             - length
+    ///             - RandomVariable
+    /// 
+    /// </summary>
     class RandomArray
     {
         public uint[] data;
         public ulong length { get; set; }
-        private Random RandomVariable;
+
         public object this[int i] 
         { 
             get { return data[i]; }
@@ -18,6 +29,7 @@ namespace BinaryHeapProfiler
 
         public RandomArray(ulong Size)
         {
+            Random RandomVariable;
             length = Size;
             data = new uint[length];
             RandomVariable = new Random();

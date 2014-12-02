@@ -1,5 +1,5 @@
-﻿//#define DEBUGING
-#define PROFILE
+﻿#define DEBUGING
+//#define PROFILE
 #define PROFILE_RAP
 #define PROFILE_DAIC
 #define PROFILE_IHOD
