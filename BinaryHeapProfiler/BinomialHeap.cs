@@ -16,23 +16,22 @@ namespace BinaryHeapProfiler
     /// <typeparam name="T">Generic data type for the node storage.</typeparam>
     class BinomialHeap<T>   where T : IComparable
     {
-        heap<BinomialNode<T>> BHeap;
+        BinomialNode<T> BHeap;
         static int MinusInf = int.MinValue;
-        public BinomialNode<T> NIL = new BinomialNode<T>(MinusInf);
+        public BinomialNode<T> NIL = null;
 
         public BinomialHeap()
         {
-            BHeap = new heap<BinomialNode<T>>(10);
-            BHeap.insertElement(NIL);
+            BHeap = new BinomialNode<T>(NIL);
         }
 
         public BinomialHeap(BinomialNode<T> root)
         {
-            BHeap = new heap<BinomialNode<T>>(10);
+            BHeap = new BinomialNode<T>();
             root.parent = NIL;
             root.sibling = NIL;
             root.child = NIL;
-            BHeap.insertElement(new BinomialNode<T>(root.getData(), root.getKey()));
+            BHeap=(new BinomialNode<T>(root.getData(), root.getKey()));
         }
 
         BinomialHeap<T> Binomial_HeapMerge(BinomialHeap<T> H1, BinomialHeap<T> H2)
@@ -42,19 +41,19 @@ namespace BinaryHeapProfiler
             b = H2.head();
             H1.head((Min_Degree(H1, H2)).head());
             // Check in case they are both empty
-            if (H1.head() == NIL)
+            if (H1.head().Equals(NIL))
             {
                 H1.head(NIL);
                 return new BinomialHeap<T>(H1);
             }
             // If H2 has a lesser degree than <i>a</i>, then swap them.
-            if (H1.head() == b)
+            if (H1.head().Equals(b))
                 b = a;
             a = H1.head();
-            while (b != NIL)
+            while (!b.Equals( NIL))
             {
                 // If <i>a</i> has no sibblings then make <i>b</i> its sibbling and we are done.
-                if (a.sibling == NIL)
+                if (a.sibling==NIL)
                 {
                     a.sibling = b;
                     H1.head(a);
@@ -79,13 +78,16 @@ namespace BinaryHeapProfiler
         {
             BinomialHeap<T> H;
             BinomialNode<T> x, prev_x, next_x;
+            x       = new BinomialNode<T> { child = NIL, parent = NIL, sibling = NIL };
+            prev_x  = new BinomialNode<T> { child = NIL, parent = NIL, sibling = NIL };
+            next_x  = new BinomialNode<T> { child = NIL, parent = NIL, sibling = NIL };
             H = Binomial_HeapMerge(H1, H2);
-            if (H.head() == NIL)
+            if (H.head().Equals(NIL))
                 return H;
             prev_x = NIL;
             x = H.head();
             next_x = x.sibling;
-            while (next_x != NIL)
+            while (next_x != null && !next_x.Equals(NIL))
             {
                 if ((x.getDegree() != next_x.getDegree()) ||
                   ((next_x.sibling != NIL) &&
@@ -103,7 +105,7 @@ namespace BinaryHeapProfiler
                     }
                     else
                     {   // Case 4
-                        if (prev_x == NIL)
+                        if (prev_x==NIL)
                             H.head(next_x);
                         else
                             prev_x.sibling = next_x;
@@ -118,13 +120,18 @@ namespace BinaryHeapProfiler
         BinomialHeap<T> Min_Degree(BinomialHeap<T> H1, BinomialHeap<T> H2)
         {
             if (H1.head().getDegree() <= H2.head().getDegree())
-                return H1;
+            {
+                if (H1.head().Equals(NIL) && H2.head().Equals(NIL))
+                    return H1;
+                else
+                    return H2;
+            }
             else
                 return H2;
         }
 
-        public BinomialNode<T>     head()                                   { return BHeap.nodes[0];  }
-        public void                head(BinomialNode<T> context)            { BHeap.nodes[0] = context; }
+        public BinomialNode<T>     head()                                   { return BHeap;  }
+        public void                head(BinomialNode<T> context)            { BHeap = context; }
         public                     BinomialHeap(BinomialHeap<T> context)    { this.BHeap = context.BHeap; }
 
         public void print()

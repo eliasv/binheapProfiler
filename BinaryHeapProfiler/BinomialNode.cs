@@ -139,11 +139,22 @@ namespace BinaryHeapProfiler
         /// <param name="node">BinomialNode to replicate.</param>
         public BinomialNode(BinomialNode<T> node)
         {
-            data = node.data;
-            key = node.key;
-            parent = node.parent;
-            sibling = node.sibling;
-            child = node.child;
+            if (node!=null)
+            {
+                data = node.data;
+                key = node.key;
+                parent = node.parent;
+                sibling = node.sibling;
+                child = node.child;
+            }
+            else
+            {
+                data = default(T);
+                key = int.MinValue;
+                parent = null;
+                sibling = null;
+                child = null;
+            }
         }
 
         /// <summary>
@@ -194,6 +205,18 @@ namespace BinaryHeapProfiler
 
         }
 
+        public override bool Equals(object obj)
+        {
+            if (this == null && obj == null)
+                return true;
+            if (obj == null)
+                return false;
+            BinomialNode<T> compareTo = obj as BinomialNode<T>;
+            if ((System.Object)compareTo == null)
+                return false;
+            return this.key == compareTo.key;
+        }
+
         /// <summary>
         /// print()           : Visualization of the node structure.
         /// </summary>
@@ -203,7 +226,7 @@ namespace BinaryHeapProfiler
             BinomialNode<T> NIL = new BinomialNode<T>(int.MinValue);
 
             string output = "";
-            while (current != NIL)
+            while (!current.Equals(NIL))
             {
                 for (int i = 0; i < current.getDegree(); i++)
                 {
@@ -211,7 +234,7 @@ namespace BinaryHeapProfiler
                 }
                 output += current.getKey().ToString();
                 Console.WriteLine(output);
-                if (current.child != NIL)
+                if (!current.child.Equals(NIL))
                     current.child.print();
                 current = current.sibling;
             }
