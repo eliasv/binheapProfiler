@@ -344,24 +344,20 @@ namespace BinaryHeapProfiler
 
             #region Testing
 #if (DEBUGING)
-            uint[] A1 = { 9, 7, 8, 1, 4 };
+            int[]  A1 = { 9, 7, 8, 1, 4 };
             uint[] A2 = { 2, 6, 3, 19, 0 };
-            H1 = new heap<uint>(A1, 5);
+            int[]  A3 = { 2, 6, 3, 19, 0 };
+            H1 = new heap<uint>(A2, 5);
             H2 = new heap<uint>(A2, 5);
+            BinomialHeap<uint> BH1 = new BinomialHeap<uint>();
+            BinomialHeap<uint> BH2 = new BinomialHeap<uint>();
             Console.WriteLine("****** H1 ******");
-            H1.print();
-            H1.buildMinHeap();
-            H1.print();
+            BH1.HeapInsert(A1);
+            BH1.print();
             Console.WriteLine("****** H2 ******");
-            H2.print();
-            H2.buildMinHeap();
-            H2.print();
-            H1.union(H2);
-            Console.WriteLine("****** (H1)U(H2) ******");
-            H1.print();
-            Console.WriteLine("****** (H2)U(H1) ******");
-            H2.union(A1);
-            H2.print();
+            BH2.HeapInsert(A3);
+            BH2.print();
+
             
 #endif
 #endregion 

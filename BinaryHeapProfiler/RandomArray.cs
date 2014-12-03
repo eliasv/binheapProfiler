@@ -14,7 +14,7 @@ namespace BinaryHeapProfiler
     ///         Data members:
     ///             - data
     ///             - length
-    ///             - RandomVariable
+    ///             
     /// 
     /// </summary>
     class RandomArray

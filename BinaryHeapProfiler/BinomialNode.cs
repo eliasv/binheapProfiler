@@ -24,6 +24,7 @@ namespace BinaryHeapProfiler
     ///                         its parent node.
     ///         - child     : The child of any node contains its left child.
     ///         - data      : Any information attached to the data structure.
+    ///         - NIL       : Null pointer reference.
     ///         
     ///     Binomial node methods:
     ///         - BinomialNode()    : Default empty constructor
@@ -41,6 +42,7 @@ namespace BinaryHeapProfiler
     ///                             : Links node <i>y</i> to node <i>z</i>.
     ///         - IComparable.CompareTo(object obj)
     ///                             : Provides basis for comparing and sorting.
+    ///         - print()           : Visualization of the node structure.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     class BinomialNode<T> : IComparable
@@ -83,6 +85,8 @@ namespace BinaryHeapProfiler
         /// </summary>
         /// <returns>uint</returns>
         public uint getDegree() { return degree; }
+
+        public T getData() { return data; }
 
         /// <summary>
         /// BinomialNode()    : Default empty constructor
@@ -189,5 +193,29 @@ namespace BinaryHeapProfiler
                 throw new ArgumentException("Object is not a BinomialNode<T>.");
 
         }
+
+        /// <summary>
+        /// print()           : Visualization of the node structure.
+        /// </summary>
+        public void print()
+        {
+            BinomialNode<T> current = this;
+            BinomialNode<T> NIL = new BinomialNode<T>(int.MinValue);
+
+            string output = "";
+            while (current != NIL)
+            {
+                for (int i = 0; i < current.getDegree(); i++)
+                {
+                    output += " ";
+                }
+                output += current.getKey().ToString();
+                Console.WriteLine(output);
+                if (current.child != NIL)
+                    current.child.print();
+                current = current.sibling;
+            }
+        }
+
     }
 }

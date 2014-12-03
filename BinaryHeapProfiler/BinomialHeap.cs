@@ -13,12 +13,12 @@ namespace BinaryHeapProfiler
     ///     A Binomial Heap is a recursive structure that follows the min-heap
     ///     property.
     /// </summary>
-    /// <typeparam name="T">Generic data type for the nodes.</typeparam>
+    /// <typeparam name="T">Generic data type for the node storage.</typeparam>
     class BinomialHeap<T>   where T : IComparable
     {
         heap<BinomialNode<T>> BHeap;
         static int MinusInf = int.MinValue;
-        BinomialNode<T> NIL = new BinomialNode<T>(MinusInf);
+        public BinomialNode<T> NIL = new BinomialNode<T>(MinusInf);
 
         public BinomialHeap()
         {
@@ -26,7 +26,14 @@ namespace BinaryHeapProfiler
             BHeap.insertElement(NIL);
         }
 
-        
+        public BinomialHeap(BinomialNode<T> root)
+        {
+            BHeap = new heap<BinomialNode<T>>(10);
+            root.parent = NIL;
+            root.sibling = NIL;
+            root.child = NIL;
+            BHeap.insertElement(new BinomialNode<T>(root.getData(), root.getKey()));
+        }
 
         BinomialHeap<T> Binomial_HeapMerge(BinomialHeap<T> H1, BinomialHeap<T> H2)
         {
@@ -64,9 +71,48 @@ namespace BinaryHeapProfiler
                     b = c;
                 }
             }
+            H1.head(a);
             return new BinomialHeap<T>(H1);
         }
 
+        BinomialHeap<T> Binomial_HeapUnion(BinomialHeap<T> H1, BinomialHeap<T> H2)
+        {
+            BinomialHeap<T> H;
+            BinomialNode<T> x, prev_x, next_x;
+            H = Binomial_HeapMerge(H1, H2);
+            if (H.head() == NIL)
+                return H;
+            prev_x = NIL;
+            x = H.head();
+            next_x = x.sibling;
+            while (next_x != NIL)
+            {
+                if ((x.getDegree() != next_x.getDegree()) ||
+                  ((next_x.sibling != NIL) &&
+                    (next_x.sibling.getDegree() == x.getDegree())))
+                {   // Case 1 and 2
+                    prev_x = x;
+                    x = next_x;
+                }
+                else
+                {
+                    if (x.getKey() <= next_x.getKey())
+                    {   // Case 3
+                        x.sibling = next_x.sibling;
+                        x.link(next_x);
+                    }
+                    else
+                    {   // Case 4
+                        if (prev_x == NIL)
+                            H.head(next_x);
+                        else
+                            prev_x.sibling = next_x;
+                        next_x.link(x);
+                    }
+                }
+            } 
+            return H;
+        }
 
 
         BinomialHeap<T> Min_Degree(BinomialHeap<T> H1, BinomialHeap<T> H2)
@@ -81,11 +127,26 @@ namespace BinaryHeapProfiler
         public void                head(BinomialNode<T> context)            { BHeap.nodes[0] = context; }
         public                     BinomialHeap(BinomialHeap<T> context)    { this.BHeap = context.BHeap; }
 
-        int calculateDegree(heap<T> BinHeap)
+        public void print()
         {
-            return (int)Math.Floor(Math.Log((double)BinHeap.length));
+            this.head().print();
         }
 
+        public void HeapInsert(BinomialNode<T> x)
+        {
+            BinomialHeap<T> H = new BinomialHeap<T>(x);
+            this.head(this.Binomial_HeapUnion(this, H).head());
+        }
 
+        public void HeapInsert(int[] keys)
+        {
+            var len = keys.Length;
+            for(int i=0; i < len; i++)
+            {
+                BinomialHeap<T> H = new BinomialHeap<T>(new BinomialNode<T>(keys[i]));
+                this.head(this.Binomial_HeapUnion(this, H).head());
+            }
+            
+        }
     }
 }
