@@ -1,5 +1,5 @@
-﻿//#define DEBUG
-#define PROFILE
+﻿#define DEBUGING
+//#define PROFILE
 #define PROFILE_RAP
 #define PROFILE_DAIC
 #define PROFILE_IHOD
@@ -34,9 +34,9 @@ namespace BinaryHeapProfiler
             Stopwatch timekeeper = new Stopwatch();
             RandomArray A, B;
             int repeats = 0;
-            long Tmax = 2000;
+            long Tmax = 500;
             uint[] N = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-            int maxPowerN = 6;
+            int maxPowerN = 3;
             uint iterator=0;
             int Cols = 7;
             double[,] Table = new double[maxPowerN * (10 - 1), Cols];
@@ -343,25 +343,21 @@ namespace BinaryHeapProfiler
 #endregion
 
             #region Testing
-#if (DEBUG)
-            uint[] A1 = { 9, 7, 8, 1, 4 };
+#if (DEBUGING)
+            int[]  A1 = { 9, 7, 8, 1, 4 };
             uint[] A2 = { 2, 6, 3, 19, 0 };
-            H1 = new heap<uint>(A1, 5);
+            int[]  A3 = { 2, 6, 3, 19, 0 };
+            H1 = new heap<uint>(A2, 5);
             H2 = new heap<uint>(A2, 5);
+            BinomialHeap<uint> BH1 = new BinomialHeap<uint>();
+            BinomialHeap<uint> BH2 = new BinomialHeap<uint>();
             Console.WriteLine("****** H1 ******");
-            H1.print();
-            H1.buildMinHeap();
-            H1.print();
+            BH1.HeapInsert(A1);
+            BH1.print();
             Console.WriteLine("****** H2 ******");
-            H2.print();
-            H2.buildMinHeap();
-            H2.print();
-            H1.union(H2);
-            Console.WriteLine("****** (H1)U(H2) ******");
-            H1.print();
-            Console.WriteLine("****** (H2)U(H1) ******");
-            H2.union(A1);
-            H2.print();
+            BH2.HeapInsert(A3);
+            BH2.print();
+
             
 #endif
 #endregion 
@@ -412,7 +408,7 @@ namespace BinaryHeapProfiler
                                  + System.DateTime.Now.Hour.ToString()
                                  + System.DateTime.Now.Minute.ToString()
                                  + System.DateTime.Now.Second.ToString()
-                                 + ")";
+                                 +   ")";
                 xlWorkBook.SaveAs(now+" Profiling.xls", Excel.XlFileFormat.xlWorkbookNormal);
                 xlWorkBook.Close(true, misValue, misValue);
                 excelApp.Quit();
@@ -456,10 +452,9 @@ namespace BinaryHeapProfiler
             var ratio = (((new Random().NextDouble()) - 0.5) * stddev + r);  // Generate a random ratio (≈ r ± stddev/2)
             uint S1 = (uint)Math.Floor(ratio*N);
             uint S2 = N - S1;
-            RandomArray A = new RandomArray((ulong)S1);
-            RandomArray B = new RandomArray((ulong)S2);
-            H1 = new heap<uint>(A.data, 2 * N);
-            H2 = new heap<uint>(B.data, 2 * N);
+            RandomArray A = new RandomArray((ulong)N);
+            H1 = new heap<uint>(A.data, 0, S1, 2 * N);
+            H2 = new heap<uint>(A.data, S2, N,  2 * N);
             H1.buildMinHeap();
             H2.buildMinHeap();
         }
