@@ -78,9 +78,85 @@ namespace BinaryHeapProfiler
         {
             BinomialHeap<T> H;
             BinomialNode<T> x, prev_x, next_x;
-            x       = new BinomialNode<T> { child = NIL, parent = NIL, sibling = NIL };
-            prev_x  = new BinomialNode<T> { child = NIL, parent = NIL, sibling = NIL };
-            next_x  = new BinomialNode<T> { child = NIL, parent = NIL, sibling = NIL };
+            x       = new BinomialNode<T> ();
+            prev_x  = new BinomialNode<T> (int.MinValue);
+            next_x  = new BinomialNode<T> ();
+            H = Binomial_HeapMerge(H1, H2);
+            if (H.head().Equals(NIL))
+                return H;
+            x = H.head();
+            prev_x.sibling = x;
+            next_x = x.sibling;
+            while(next_x != null && !next_x.isNIL())
+            {
+                // Three (3) possible cases:
+                // Case 1: prev_x.degree < x.degree OR x == null
+                if (!prev_x.isNIL() && (prev_x.getDegree() < x.getDegree()))
+                {
+                    //          - move forward to the next tree.
+                    prev_x = x;
+                    x = next_x;
+                    next_x = next_x.sibling;
+                }
+                // Case 2: prev_x.degree == x.degree == next_x.degree
+                else
+                {
+                    if (prev_x.getDegree() == x.getDegree() && x.getDegree() == next_x.getDegree() && !prev_x.isNIL())
+                    //          - same as Case 1
+                    {
+                        //          - move forward to the next tree.
+                        prev_x = x;
+                        x = next_x;
+                        next_x = next_x.sibling;
+                    }
+                    else
+                    {
+                        // Case 3: prev_x.degree == x.degree AND (x.degree < next_x.degree OR next_x = null)
+                        if (x.getDegree() == next_x.getDegree() &&
+                           (next_x.isNIL() ||
+                           (next_x != null &&
+                           (x.getKey() < next_x.getKey()))))
+                        {
+                            //          - link prev_x with x, move x and next_x to the next respective tree
+                            x.sibling = next_x.sibling;
+                            x.link(next_x);
+                            next_x = x.sibling;
+                        }
+                        // Case 4: prev_x.degree == x.degree AND (x.degree > next_x.degree OR next_x = null)
+                        else if (x.getDegree() == next_x.getDegree() &&
+                           (next_x.isNIL() ||
+                           (next_x != null &&
+                           (x.getKey() > next_x.getKey()))))
+                        {
+                            // reverse the link order to preserve minHeap property
+                            if (prev_x == null || prev_x.isNIL())
+                                H.head(next_x);
+                            else
+                                prev_x.sibling = next_x;
+                            next_x.link(x);
+                        }
+                        else
+                        {
+                            prev_x = x;
+                            x = next_x;
+                            next_x = next_x.sibling;
+                        }
+                    }
+                }
+            }
+            return H;
+        }
+
+
+        /*
+
+BinomialHeap<T> Binomial_HeapUnion(BinomialHeap<T> H1, BinomialHeap<T> H2)
+        {
+            BinomialHeap<T> H;
+            BinomialNode<T> x, prev_x, next_x;
+            x       = new BinomialNode<T> ();
+            prev_x  = new BinomialNode<T> ();
+            next_x  = new BinomialNode<T> ();
             H = Binomial_HeapMerge(H1, H2);
             if (H.head().Equals(NIL))
                 return H;
@@ -90,7 +166,7 @@ namespace BinaryHeapProfiler
             while (next_x != null && !next_x.Equals(NIL))
             {
                 if ((x.getDegree() != next_x.getDegree()) ||
-                  ((next_x.sibling != NIL) &&
+                  ((next_x.sibling != null) &&
                     (next_x.sibling.getDegree() == x.getDegree())))
                 {   // Case 1 and 2
                     prev_x = x;
@@ -105,7 +181,7 @@ namespace BinaryHeapProfiler
                     }
                     else
                     {   // Case 4
-                        if (prev_x==NIL)
+                        if (prev_x==null || prev_x.isNIL())
                             H.head(next_x);
                         else
                             prev_x.sibling = next_x;
@@ -114,7 +190,9 @@ namespace BinaryHeapProfiler
                 }
             } 
             return H;
-        }
+        }         
+
+         */
 
 
         BinomialHeap<T> Min_Degree(BinomialHeap<T> H1, BinomialHeap<T> H2)

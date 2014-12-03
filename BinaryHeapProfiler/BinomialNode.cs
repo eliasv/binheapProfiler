@@ -217,6 +217,19 @@ namespace BinaryHeapProfiler
             return this.key == compareTo.key;
         }
 
+        public bool isNIL()
+        {
+            if(this==null)
+                return true;
+            else if(/*this.data.CompareTo(default(T))==0      && 
+                    this.child == null                      &&
+                    this.parent == null                     && 
+                    this.sibling == null                    &&*/
+                    this.key == int.MinValue)
+                return true;
+            return false;
+        }
+
         /// <summary>
         /// print()           : Visualization of the node structure.
         /// </summary>
@@ -226,7 +239,7 @@ namespace BinaryHeapProfiler
             BinomialNode<T> NIL = new BinomialNode<T>(int.MinValue);
 
             string output = "";
-            while (!current.Equals(NIL))
+            while (current!=(null))
             {
                 for (int i = 0; i < current.getDegree(); i++)
                 {
@@ -234,7 +247,7 @@ namespace BinaryHeapProfiler
                 }
                 output += current.getKey().ToString();
                 Console.WriteLine(output);
-                if (!current.child.Equals(NIL))
+                if (current.child!=(null))
                     current.child.print();
                 current = current.sibling;
             }
