@@ -1,18 +1,26 @@
-﻿#define DEBUGING
-//#define PROFILE
+﻿//#define DEBUGING
+#define PROFILE
 #define PROFILE_RAP
 #define PROFILE_DAIC
 #define PROFILE_IHOD
-#define PROFILE_ASE
+//#define PROFILE_ASE
 #define PROFILE_ASE_C1
 #define PROFILE_ASE_C2
-#define PROFILE_UNION
+//#define PROFILE_UNION
 #define PROFILE_UNION_C1
 #define PROFILE_UNION_C1a
 #define PROFILE_UNION_C1b
 #define PROFILE_UNION_C1c
 //#define PROFILE_UNION_C2
- 
+#define PROFILE_BH
+#define PROFILE_BH_ASE
+#define PROFILE_BH_ASE_C1
+#define PROFILE_BH_ASE_C2
+#define PROFILE_BH_UNION
+#define PROFILE_BH_UNION_C1a
+#define PROFILE_BH_UNION_C1b
+#define PROFILE_BH_UNION_C1c
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -333,7 +341,17 @@ namespace BinaryHeapProfiler
 #endif
 #endif
             #endregion
-            
+
+#if(PROFILE_BH)
+            Console.WriteLine("Profiling: Binomial Heap: Start");
+#if(PROFILE_BH_ASE)
+            #region Binomial Heap Profiling: Add single elent
+            Console.WriteLine("Profiling: Binomial Heap: Add Single Element : Case 1 : Start");
+            Console.WriteLine("Profiling: Binomial Heap: Add Single Element : Case 1 : End");
+            #endregion
+#endif
+            Console.WriteLine("Profiling: Binomial Heap: End");
+#endif
             Console.WriteLine("Profiling: End");
 
              printTable(ColumnHeaders, RowHeaders, cellData);
