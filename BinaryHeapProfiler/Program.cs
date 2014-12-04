@@ -3,15 +3,15 @@
 #define PROFILE_RAP
 #define PROFILE_DAIC
 #define PROFILE_IHOD
-//#define PROFILE_ASE
+#define PROFILE_ASE
 #define PROFILE_ASE_C1
 #define PROFILE_ASE_C2
-//#define PROFILE_UNION
+#define PROFILE_UNION
 #define PROFILE_UNION_C1
 #define PROFILE_UNION_C1a
 #define PROFILE_UNION_C1b
 #define PROFILE_UNION_C1c
-//#define PROFILE_UNION_C2
+#define PROFILE_UNION_C2
 #define PROFILE_BH
 #define PROFILE_BH_ASE
 #define PROFILE_BH_ASE_C1
@@ -339,18 +339,38 @@ namespace BinaryHeapProfiler
             Console.WriteLine("Profiling: Set Union : Case 2 : Start");
             Console.WriteLine("Profiling: Set Union : Case 2 : End");
 #endif
+            Console.WriteLine("Profiling: Set Union : End");
 #endif
             #endregion
 
 #if(PROFILE_BH)
             Console.WriteLine("Profiling: Binomial Heap: Start");
 #if(PROFILE_BH_ASE)
-            #region Binomial Heap Profiling: Add single elent
+
+#if(PROFILE_BH_ASE_C1)
+#region Binomial Heap Profiling: Add single elent
+            Console.WriteLine("Profiling: Binomial Heap: Add Single Element : Start");
+#region Binomial Heap Profilinag: Add single elent : Case 1
             Console.WriteLine("Profiling: Binomial Heap: Add Single Element : Case 1 : Start");
             Console.WriteLine("Profiling: Binomial Heap: Add Single Element : Case 1 : End");
-            #endregion
+#endregion
+#endif
+
+#if(PROFILE_BH_ASE_C2)
+#region Binomial Heap Profiling: Add single elent : Case 2
+            Console.WriteLine("Profiling: Binomial Heap: Add Single Element : Case 2 : Start");
+            Console.WriteLine("Profiling: Binomial Heap: Add Single Element : Case 2 : End");
+#endregion
+            Console.WriteLine("Profiling: Binomial Heap: Add Single Element : End");
+#endregion
+
+#endif
+#endif
+#endif
 #endif
             Console.WriteLine("Profiling: Binomial Heap: End");
+
+
 #endif
             Console.WriteLine("Profiling: End");
 
