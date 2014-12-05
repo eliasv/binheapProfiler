@@ -148,7 +148,7 @@ namespace BinaryHeapProfiler
         /// </summary>
         /// <param name="A">Data to be used to populate the initial heap array.</param>
         /// <param name="start">First index of the sub array.</param>
-        /// <param name="end">last index of the sub array</param>
+        /// <param name="end">last index of the sub array.</param>
         /// <param name="N">Initial size of heap.</param>
         public heap(T[] A, uint start, uint end, uint N)
         {

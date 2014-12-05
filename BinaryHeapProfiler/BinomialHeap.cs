@@ -330,10 +330,30 @@ namespace BinaryHeapProfiler
             var len = keys.Length;
             for(int i=0; i < len; i++)
             {
-                BinomialHeap<T> H = new BinomialHeap<T>(new BinomialNode<T>(keys[i]));
-                this.head(this.Binomial_HeapUnion(this, H).head());
+                this.HeapInsert((new BinomialNode<T>(keys[i])));
             }
             
+        }
+
+        /// <summary>
+        /// HeapInsert(int[], uint, uint)
+        /// 
+        /// Iteratively inserts a sub array of keys into a Binomial Heap by means of the 
+        /// HeapInsert(BinomialNode) method. Used for profiling.
+        /// </summary>
+        /// <param name="keys">int array with a set of keys to add into a Binomial Heap.</param>
+        /// <param name="start">First index of the sub array.</param>
+        /// <param name="end">last index of the sub array.</param>
+        public void HeapInsert(uint[] keys, uint start, uint end)
+        {
+
+            var len = keys.Length;
+            if (len < end)
+                throw new IndexOutOfRangeException("Array is shorter than the final sub array element.");
+            for (ulong x = 1; x < (end); x++)
+            {
+                this.HeapInsert((new BinomialNode<T>((int)keys[x-1])));
+            }
         }
 
         /// <summary>
@@ -347,5 +367,7 @@ namespace BinaryHeapProfiler
                 BinomialHeap<T> H = new BinomialHeap<T>(new BinomialNode<T>(key));
                 this.head(this.Binomial_HeapUnion(this, H).head());
         }
+
+
     }
 }

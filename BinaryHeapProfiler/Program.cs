@@ -1,8 +1,11 @@
-﻿#define DEBUGING
-//#define PROFILE
+﻿//#define DEBUGING
+#define PROFILE
 #define PROFILE_RAP
 #define PROFILE_DAIC
 #define PROFILE_IHOD
+#define PROFILE_GENERATE_SUBSETS
+#define PROFILE_GENERATE_SUBSETS_BINARY_HEAPS
+#define PROFILE_GENERATE_SUBSETS_BINOMIAL_HEAPS
 #define PROFILE_ASE
 #define PROFILE_ASE_C1
 #define PROFILE_ASE_C2
@@ -44,13 +47,15 @@ namespace BinaryHeapProfiler
             int repeats = 0;
             long Tmax = 500;
             uint[] N = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-            int maxPowerN = 3;
+            int maxPowerN = 2;
             uint iterator=0;
             int Cols = 7;
             double[,] Table = new double[maxPowerN * (10 - 1), Cols];
             double ratio, stddev;
             heap<uint> H;
-            BinomialHeap<uint> BH, BH1, BH2;
+            BinomialHeap<uint> BH = new BinomialHeap<uint>();
+            BinomialHeap<uint> BH1 = new BinomialHeap<uint>();
+            BinomialHeap<uint> BH2 = new BinomialHeap<uint>();
             heap<uint> H1 = new heap<uint>();
             heap<uint> H2 = new heap<uint>();
             List<String> ColumnHeaders = new List<string>();
@@ -71,11 +76,11 @@ namespace BinaryHeapProfiler
 
 #region Profiling Code
 #if (PROFILE)
-            Console.WriteLine("Profiling: Start");
+            Console.WriteLine("Profiling : Start");
             #region Random Array Profiling
 #if (PROFILE_RAP)
-            Console.WriteLine("Profiling: Random Array Profiling : Start");
-            ColumnHeaders.Add("Profiling: Random Array Profiling");
+            Console.WriteLine("Profiling : Random Array Profiling : Start");
+            ColumnHeaders.Add("Profiling : Random Array Profiling");
             iterator = 0;
             foreach(var k in RowHeaders)
             {
@@ -92,15 +97,15 @@ namespace BinaryHeapProfiler
                 Console.WriteLine("Done: N=" + k.ToString());
             }
 
-            Console.WriteLine("Profiling: Random Array Profiling : End");
+            Console.WriteLine("Profiling : Random Array Profiling : End");
 #endif
 
 #endregion
 
             #region Heap Profiling: Declaration and Array Initialization copy
 #if(PROFILE_DAIC)
-            Console.WriteLine("Profiling: Declaration and Array Initialization copy : Start");
-            ColumnHeaders.Add("Profiling: Declaration and Array Initialization copy");
+            Console.WriteLine("Profiling : Declaration and Array Initialization copy : Start");
+            ColumnHeaders.Add("Profiling : Declaration and Array Initialization copy");
             iterator = 0;
             foreach (var k in RowHeaders)
             {
@@ -120,14 +125,73 @@ namespace BinaryHeapProfiler
                 Console.WriteLine("Done: N=" + k.ToString());
             }
 
-            Console.WriteLine("Profiling: Declaration and Array Initialization copy : End");
+            Console.WriteLine("Profiling : Declaration and Array Initialization copy : End");
 #endif
 #endregion
 
+#region Profile: Set Generation
+#if(PROFILE_GENERATE_SUBSETS)
+            Console.WriteLine("Profile : Set Generation : Start");
+#if(PROFILE_GENERATE_SUBSETS_BINARY_HEAPS)
+#region Profile : Set Generation : Binary Heaps : Start
+            Console.WriteLine("Profile : Set Generation : Binary Heaps : Start");
+            ColumnHeaders.Add("Profile : Set Generation : Binary Heaps : Start");
+            iterator = 0;
+            foreach (var k in RowHeaders)
+            {
+                // Profiling Starts
+                repeats = 0;
+                timekeeper.Restart();
+                while (timekeeper.ElapsedMilliseconds < Tmax)
+                {
+                    generateHeaps(ref H1, ref H2, k, 0.5, 0.25);
+                    repeats++;
+                }
+                timekeeper.Stop();
+                // Profiling ends
+                cellData.ElementAt((int)(iterator++)).Add((double)timekeeper.ElapsedMilliseconds
+                                        / ((double)repeats * 1000));
+                Console.WriteLine("Done: N=" + k.ToString());
+            }
+
+            Console.WriteLine("Profile : Set Generation : Binary Heaps : End");
+#endregion // Profile: Set Generation: Binary Heaps: End
+#endif  // PROFILE_GENERATE_SUBSETS_BINARY_HEAPS
+
+#if(PROFILE_GENERATE_SUBSETS_BINOMIAL_HEAPS)
+#region Profile: Set Generation: Binomial Heaps: Start
+            Console.WriteLine("Profile : Set Generation : Binomial Heaps : Start");
+            ColumnHeaders.Add("Profile : Set Generation : Binomial Heaps : Start");
+            iterator = 0;
+            foreach (var k in RowHeaders)
+            {
+                // Profiling Starts
+                repeats = 0;
+                timekeeper.Restart();
+                while (timekeeper.ElapsedMilliseconds < Tmax)
+                {
+                    generateBinomialHeaps(ref BH1, ref BH2, k, 0.5, 0.25);
+                    repeats++;
+                }
+                timekeeper.Stop();
+                // Profiling ends
+                cellData.ElementAt((int)(iterator++)).Add((double)timekeeper.ElapsedMilliseconds
+                                        / ((double)repeats * 1000));
+                Console.WriteLine("Done: N=" + k.ToString());
+            }
+
+            Console.WriteLine("Profile : Set Generation : Binomial Heaps : End");
+#endregion // Profile: Set Generation: Binomial Heaps: End
+#endif  // PROFILE_GENERATE_SUBSETS_BINOMIAL_HEAPS
+            Console.WriteLine("Profile : Set Generation : End");
+#endif //PROFILE_GENERATE_SUBSETS
+#endregion
+
+
             #region Heap Profiling: Initial heapification of data.
 #if(PROFILE_IHOD)
-            Console.WriteLine("Profiling: Initial heapification of data : Start");
-            ColumnHeaders.Add("Profiling: Initial heapification of data");
+            Console.WriteLine("Profiling : Binary Heap : Initial heapification of data : Start");
+            ColumnHeaders.Add("Profiling : Binary Heap : Initial heapification of data");
             iterator = 0;
             foreach(var k in RowHeaders)
             {
@@ -148,18 +212,18 @@ namespace BinaryHeapProfiler
                 Console.WriteLine("Done: N=" + k.ToString());
             }
 
-            Console.WriteLine("Profiling: Initial heapification of data : End");
+            Console.WriteLine("Profiling : Binary Heap : Initial heapification of data : End");
 #endif
             #endregion
 
             #region Heap Profiling: Add single element to heap.
 #if(PROFILE_ASE)
-            Console.WriteLine("Profiling: Add single element to heap : Start");
+            Console.WriteLine("Profiling : Binary Heap : Add single element to heap : Start");
             //  case 1: add element with heap array resize.
             //  case 2: add element without heap array resize
 #if (PROFILE_ASE_C1)
-            Console.WriteLine("Profiling: Add single element to heap : Case 1 : Start");
-            ColumnHeaders.Add("Profiling: Add single element to heap : Case 1 : add element with heap array resize");
+            Console.WriteLine("Profiling : Binary Heap : Add single element to heap : Case 1 : Start");
+            ColumnHeaders.Add("Profiling : Binary Heap : Add single element to heap : Case 1 : add element with heap array resize");
             // Case 1
             iterator = 0;
             foreach(var k in RowHeaders)
@@ -184,12 +248,12 @@ namespace BinaryHeapProfiler
             }
 
 
-            Console.WriteLine("Profiling: Add single element to heap : Case 1 : End");
+            Console.WriteLine("Profiling : Binary Heap : Add single element to heap : Case 1 : End");
 #endif
             //Case 2
 #if (PROFILE_ASE_C2)
-            Console.WriteLine("Profiling: Add single element to heap : Case 2 : Start");
-            ColumnHeaders.Add("Profiling: Add single element to heap : Case 2: add element without heap array resize");
+            Console.WriteLine("Profiling : Binary Heap : Add single element to heap : Case 2 : Start");
+            ColumnHeaders.Add("Profiling : Binary Heap : Add single element to heap : Case 2: add element without heap array resize");
             iterator = 0;
             foreach(var k in RowHeaders)
             {
@@ -213,16 +277,16 @@ namespace BinaryHeapProfiler
             }
 
 
-            Console.WriteLine("Profiling: Add single element to heap : Case 2 : End");
+            Console.WriteLine("Profiling : Binary Heap : Add single element to heap : Case 2 : End");
 #endif
-            Console.WriteLine("Profiling: Add single element to heap : End");
+            Console.WriteLine("Profiling : Binary Heap : Add single element to heap : End");
 #endif
-#endregion
-            
+            #endregion
+
             #region Heap Profiling: Union
 #if(PROFILE_UNION)
             #region Profiling: Set Union : Start
-            Console.WriteLine("Profiling: Set Union : Start");
+            Console.WriteLine("Profiling : Binary Heap : Set Union : Start");
             // Preconditions: 
             //          No resizing is needed. 
             //          H1.length + H2.length = N
@@ -231,13 +295,13 @@ namespace BinaryHeapProfiler
             // Case 1a: Heap H1 is smaller than Heap H2. Ratio ~ 1:10
             // Case 1b: Heap H1 is larger than Heap H2. Ratio ~ 10:1
             // Case 1c: Heap H1 is similar in size to Heap H2. Ratio ~ 1:1
-            // Case 2: Union between a heap and an Array
+            
 #if(PROFILE_UNION_C1)
-            Console.WriteLine("Profiling: Set Union : Case 1 : Start");
+            Console.WriteLine("Profiling : Binary Heap : Set Union : Case 1 : Start");
 #if(PROFILE_UNION_C1a)
-#region Profiling: Set Union : Case 1a : Start
-            Console.WriteLine("Profiling: Set Union : Case 1a : Start");
-            ColumnHeaders.Add("Profiling: Case 1a: Heap H1 is smaller than Heap H2. Ratio ~ 1:10");
+            #region Profiling: Set Union : Binary Heap : Case 1a : Start
+            Console.WriteLine("Profiling : Binary Heap : Set Union : Case 1a : Start");
+            ColumnHeaders.Add("Profiling : Binary Heap : Case 1a : Heap H1 is smaller than Heap H2. Ratio ~ 1:10");
             iterator = 0;
             ratio = 0.1;
             foreach (var k in RowHeaders)
@@ -266,13 +330,13 @@ namespace BinaryHeapProfiler
                                         / ((double)repeats * 1000));
                 Console.WriteLine("Done: N=" + k.ToString());
             }
-            Console.WriteLine("Profiling: Set Union : Case 1a : End");
-#endregion // Profiling: Set Union : Case 1a : End
+            Console.WriteLine("Profiling : Binary Heap : Set Union : Case 1a : End");
+            #endregion // Profiling: Set Union : Case 1a : End
 #endif // PROFILE_UNION_C1a
 #if(PROFILE_UNION_C1b)
-            #region Profiling: Set Union : Case 1b : Start
-            Console.WriteLine("Profiling: Set Union : Case 1b : Start");
-            ColumnHeaders.Add("Profiling: Case 1b: Heap H1 is larger than Heap H2. Ratio ~ 10:1");
+            #region Profiling: Set Union : Binary Heap : Case 1b : Start
+            Console.WriteLine("Profiling : Binary Heap : Set Union : Case 1b : Start");
+            ColumnHeaders.Add("Profiling : Binary Heap : Case 1b : Heap H1 is larger than Heap H2. Ratio ~ 10:1");
             iterator = 0;
             ratio = 0.9;
             foreach (var k in RowHeaders)
@@ -301,13 +365,13 @@ namespace BinaryHeapProfiler
                                         / ((double)repeats * 1000));
                 Console.WriteLine("Done: N=" + k.ToString());
             }
-            Console.WriteLine("Profiling: Set Union : Case 1b : End");
-#endregion // Profiling: Set Union : Case 1b : End
+            Console.WriteLine("Profiling : Binary Heap : Set Union : Case 1b : End");
+            #endregion // Profiling: Set Union : Case 1b : End
 #endif // PROFILE_UNION_C1b
 #if(PROFILE_UNION_C1c)
-            #region Profiling: Set Union : Case 1c : Start
-            Console.WriteLine("Profiling: Set Union : Case 1c : Start");
-                        ColumnHeaders.Add("Profiling: Case 1c: Heap H1 is similar in size to Heap H2. Ratio ~ 1:1");
+            #region Profiling: Set Union : Binary Heap : Case 1c : Start
+            Console.WriteLine("Profiling : Binary Heap : Set Union : Case 1c : Start");
+            ColumnHeaders.Add("Profiling : Binary Heap : Case 1c : Heap H1 is similar in size to Heap H2. Ratio ~ 1:1");
             iterator = 0;
             ratio = 0.5;
             foreach (var k in RowHeaders)
@@ -336,32 +400,28 @@ namespace BinaryHeapProfiler
                                         / ((double)repeats * 1000));
                 Console.WriteLine("Done: N=" + k.ToString());
             }
-            Console.WriteLine("Profiling: Set Union : Case 1c : End");
-#endregion // Profiling: Set Union : Case 1c : End
+            Console.WriteLine("Profiling : Binary Heap : Set Union : Case 1c : End");
+            #endregion // Profiling: Set Union : Case 1c : End
 #endif // PROFILE_UNION_C1c
-            Console.WriteLine("Profiling: Set Union : Case 1: End");
-#endif
-#if(PROFILE_UNION_C2)
-            Console.WriteLine("Profiling: Set Union : Case 2 : Start");
-            Console.WriteLine("Profiling: Set Union : Case 2 : End");
+            Console.WriteLine("Profiling : Binary Heap : Set Union : Case 1: End");
 #endif
 
-            Console.WriteLine("Profiling: Set Union : End");
+            Console.WriteLine("Profiling : Binary Heap : Set Union : End");
             #endregion // Profiling: Set Union : End
 #endif
             #endregion
 
 #if(PROFILE_BH)
             #region Binomial Heap Profiling
-            Console.WriteLine("Profiling: Binomial Heap: Start");
+            Console.WriteLine("Profiling : Binomial Heap: Start");
 #if(PROFILE_BH_ASE)
-#region Binomial Heap Profiling: Add single elent
-            Console.WriteLine("Profiling: Binomial Heap: Add Single Element : Start");
+            #region Binomial Heap Profiling: Add single elent
+            Console.WriteLine("Profiling : Binomial Heap: Add Single Element : Start");
 #if(PROFILE_BH_ASE_C1)
-#region Binomial Heap Profilinag: Add single element
-            Console.WriteLine("Profiling: Binomial Heap: Add Single Element : Start");
+            #region Binomial Heap Profilinag: Add single element
+            Console.WriteLine("Profiling : Binomial Heap : Add Single Element : Start");
 
-            ColumnHeaders.Add("Profiling: Binomial Heap: Add Single Element");
+            ColumnHeaders.Add("Profiling : Binomial Heap : Add Single Element");
             // Case 1
             iterator = 0;
             foreach (var k in RowHeaders)
@@ -383,12 +443,15 @@ namespace BinaryHeapProfiler
                                         / ((double)repeats * 1000));
                 Console.WriteLine("Done: N=" + k.ToString());
             }
-            Console.WriteLine("Profiling: Binomial Heap: Add Single Element : Case 1 : End");
-#endregion // Binomial Heap Profilinag: Add single element
+            Console.WriteLine("Profiling : Binomial Heap : Add Single Element : End");
+            #endregion // Binomial Heap Profilinag: Add single element
 #endif  // PROFILE_BH_ASE_C1
 
+            #endregion // Binomial Heap Profiling: Add single elent
+#endif  // PROFILE_BH_ASE
+
 #if(PROFILE_BH_UNION)
-#region Binomial Heap Profiling: UNION
+            #region Binomial Heap Profiling: UNION
             // Preconditions: 
             //          No resizing is needed. 
             //          H1.length + H2.length = N
@@ -397,21 +460,122 @@ namespace BinaryHeapProfiler
             // Case 1a: Heap H1 is smaller than Heap H2. Ratio ~ 1:10
             // Case 1b: Heap H1 is larger than Heap H2. Ratio ~ 10:1
             // Case 1c: Heap H1 is similar in size to Heap H2. Ratio ~ 1:1
-            Console.WriteLine("Profiling: Binomial Heap: Set Union: Start");
+            Console.WriteLine("Profiling: Binomial Heap: Set Union : Start");
+
+            #region Binomial Heap Profiling: Set Union : Case 1a : Start
+#if(PROFILE_BH_UNION_C1a)
+            Console.WriteLine("Profiling: Binomial Heap: Set Union : Case 1a : Start");
+            ColumnHeaders.Add("Profiling: Binomial Heap: Set Union : Case 1a : Heap H1 is smaller than Binomial Heap H2. Ratio ~ 1:10");
+            iterator = 0;
+            ratio = 0.1;
+            foreach (var k in RowHeaders)
+            {
+                generateBinomialHeaps(ref BH1, ref BH2, k, ratio, stddev);
+                // Profiling Starts
+                repeats = 0;
+                timekeeper.Restart();
+                while (timekeeper.ElapsedMilliseconds < Tmax)
+                {
+                    BH1 = BH1.Binomial_HeapUnion(BH1,BH2);
+                    repeats++;
+                    // In order to maintain the statistical property for the ratio in the heaps
+                    // a new set of Binomial heaps within the ration must be generated. In order to 
+                    // properly measure the union procedure, the clock will pause for the duration 
+                    // of the new set generation.
+                    timekeeper.Stop();
+                    //    ---------- Stop Timer --------------
+                    generateBinomialHeaps(ref BH1, ref BH2, k, ratio, stddev);
+                    //    --------- Start Timer --------------
+                    timekeeper.Start();
+                }
+                timekeeper.Stop();
+                // Profiling ends
+                cellData.ElementAt((int)(iterator++)).Add((double)timekeeper.ElapsedMilliseconds
+                                        / ((double)repeats * 1000));
+                Console.WriteLine("Done: N=" + k.ToString());
+            }
+            Console.WriteLine("Profiling: Set Union : Case 1a : End");
+#endif // PROFILE_BH_UNION_C1a
+            #endregion // Binomial Heap Profiling: Set Union : Case 1a : End
+
+            #region Profiling: Set Union : Binomial Heap : Case 1b : Start
+#if(PROFILE_BH_UNION_C1b)
+            Console.WriteLine("Profiling : Binomial Heap : Set Union : Case 1b : Start");
+            ColumnHeaders.Add("Profiling : Binomial Heap : Case 1b : Heap H1 is larger than Binomial Heap H2. Ratio ~ 10:1");
+            iterator = 0;
+            ratio = 0.9;
+            foreach (var k in RowHeaders)
+            {
+                generateBinomialHeaps(ref BH1, ref BH2, k, ratio, stddev);
+                // Profiling Starts
+                repeats = 0;
+                timekeeper.Restart();
+                while (timekeeper.ElapsedMilliseconds < Tmax)
+                {
+                    BH1 = BH1.Binomial_HeapUnion(BH1, BH2);
+                    repeats++;
+                    // In order to maintain the statistical property for the ratio in the heaps
+                    // a new set of heaps within the ration must be generated. In order to 
+                    // properly measure the union procedure, the clock will pause for the duration 
+                    // of the new set generation.
+                    timekeeper.Stop();
+                    //    ---------- Stop Timer --------------
+                    generateBinomialHeaps(ref BH1, ref BH2, k, ratio, stddev);
+                    //    --------- Start Timer --------------
+                    timekeeper.Start();
+                }
+                timekeeper.Stop();
+                // Profiling ends
+                cellData.ElementAt((int)(iterator++)).Add((double)timekeeper.ElapsedMilliseconds
+                                        / ((double)repeats * 1000));
+                Console.WriteLine("Done: N=" + k.ToString());
+            }
+            Console.WriteLine("Profiling : Binomial Heap : Set Union : Case 1b : End");
+#endif // PROFILE_BH_UNION_C1b
+            #endregion // Profiling: Set Union : Binomial Heap : Case 1b :End
+
+            #region Profiling: Set Union : Binomial Heap : Case 1c : Start
+#if(PROFILE_BH_UNION_C1c)
+            Console.WriteLine("Profiling : Binomial Heap : Set Union : Case 1c : Start");
+            ColumnHeaders.Add("Profiling : Binomial Heap : Case 1b : Heap H1 is similar to Binomial Heap H2. Ratio ~ 1:1");
+            iterator = 0;
+            ratio = 0.5;
+            foreach (var k in RowHeaders)
+            {
+                generateBinomialHeaps(ref BH1, ref BH2, k, ratio, stddev);
+                // Profiling Starts
+                repeats = 0;
+                timekeeper.Restart();
+                while (timekeeper.ElapsedMilliseconds < Tmax)
+                {
+                    BH1 = BH1.Binomial_HeapUnion(BH1, BH2);
+                    repeats++;
+                    // In order to maintain the statistical property for the ratio in the heaps
+                    // a new set of heaps within the ration must be generated. In order to 
+                    // properly measure the union procedure, the clock will pause for the duration 
+                    // of the new set generation.
+                    timekeeper.Stop();
+                    //    ---------- Stop Timer --------------
+                    generateBinomialHeaps(ref BH1, ref BH2, k, ratio, stddev);
+                    //    --------- Start Timer --------------
+                    timekeeper.Start();
+                }
+                timekeeper.Stop();
+                // Profiling ends
+                cellData.ElementAt((int)(iterator++)).Add((double)timekeeper.ElapsedMilliseconds
+                                        / ((double)repeats * 1000));
+                Console.WriteLine("Done: N=" + k.ToString());
+            }
+            Console.WriteLine("Profiling : Binomial Heap : Set Union : Case 1c : End");
+#endif // PROFILE_BH_UNION_C1c
+            #endregion // Profiling: Set Union : Binomial Heap : Case 1c :End
 
             Console.WriteLine("Profiling: Binomial Heap: Set Union: End");
-#endregion // Binomial Heap Profiling: UNION
+            #endregion // Binomial Heap Profiling: UNION
 #endif // PROFILE_BH_UNION
 
-            Console.WriteLine("Profiling: Binomial Heap: Add Single Element : End");
-#endregion // Binomial Heap Profiling: Add single elent
-#endif  // PROFILE_BH_ASE
-
-
-
-
             Console.WriteLine("Profiling: Binomial Heap: End");
-#endregion  //Binomial Heap Profiling
+            #endregion  //Binomial Heap Profiling
 
 #endif // PROFILE_BH
             Console.WriteLine("Profiling: End");
@@ -541,6 +705,32 @@ namespace BinaryHeapProfiler
             H2 = new heap<uint>(A.data, S2, N,  2 * N);
             H1.buildMinHeap();
             H2.buildMinHeap();
+        }
+
+        /// <summary>
+        /// generateHeaps(ref heap<uint> H1, ref BinomialHeap<uint> H2, BinomialHeap, N, double r, double stddev)
+        ///         Utility:    Generates two (2) heaps with random lengths, such that N = H1.length + H2.length.
+        ///                     Given r as the ratio of elements of H1:H2, it will generate heaps of varing
+        ///                     lengths within stddev of the specified ratio.
+        /// </summary>
+        /// <param name="H1">Reference to Binomial Heap H1</param>
+        /// <param name="H2">Reference to Binomial Heap H2</param>
+        /// <param name="N">Total number of elements: N = H1.length + H2.length</param>
+        /// <param name="r">Ratio of element paritition, H1:H2, r is between 0 and (1-stddev)</param>
+        /// <param name="stddev">Standard deviation of the random sample ratio.</param>
+        private static void generateBinomialHeaps(ref BinomialHeap<uint> BH1, ref BinomialHeap<uint> BH2, uint N, double r, double stddev = 0.5)
+        {
+            if (stddev < 0 || stddev > 1) throw new ArgumentOutOfRangeException();
+            if (r < 0 || r > (1 - stddev)) throw new ArgumentOutOfRangeException();
+
+            var ratio = (((new Random().NextDouble()) - 0.5) * stddev + r);  // Generate a random ratio (≈ r ± stddev/2)
+            uint S1 = (uint)Math.Floor(ratio * N);
+            uint S2 = N - S1;
+            RandomArray A = new RandomArray((ulong)N);
+            BH1 = new BinomialHeap<uint>();
+            BH1.HeapInsert(A.data, (uint)0, S1);
+            BH2 = new BinomialHeap<uint>();
+            BH2.HeapInsert(A.data, S2, N);
         }
 
         private static void releaseObject(object obj)
