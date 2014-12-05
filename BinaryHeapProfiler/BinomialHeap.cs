@@ -10,21 +10,80 @@ namespace BinaryHeapProfiler
     /// Binomial Heap Data Structured based on CLRS 2nd Edition
     ///     Implementation by: Elias V. Beauchamp Rodriguez
     ///                        As a requirement for the course COMP6785
-    ///     A Binomial Heap is a recursive structure that follows the min-heap
+    ///     A Binomial Heap is a recursive tree structure that follows the min-heap
     ///     property.
+    ///     
+    ///     BinomialHeap Data Memeber:
+    ///         - BHeap     : BinomialNode that contains the data structure to be maintained by the 
+    ///                         BinomialHeap class. Reffered as the head of the Binomial heap.
+    ///         - NIL       : Null reference used to find leafs in the trees.
+    ///     
+    ///     BinomialHeap Methods:
+    ///         - BinomialHeap()                : Default constructor for the class, it returns an 
+    ///                                           empty data structure.
+    ///         - BinomialHeap(BinomialNode)    : Constructor used for the creation of Binomial Heaps
+    ///                                           from a BinomialNode structure. Used primerally as a
+    ///                                           way to generate new objects as return values.
+    ///         - BinomialHeap(BinomialHeap)    : Copy constructor. Used in the same manner as 
+    ///                                           BinomialNode constructor.
+    ///         - head()                        : Returns the first node of the data structure. In a 
+    ///                                           Binomial Heap that is the element with the smallest
+    ///                                           Degree.
+    ///         - head(BinomialNode)            : Replaces the current head of the Binomial Heap with
+    ///                                           a new node.
+    ///         - Binomial_HeapMerge(BinomialHeap, BinomialHeap)
+    ///                                         : Merges two (2) Binomial Heaps into a single link-list 
+    ///                                           like structure as a first step in the union of two 
+    ///                                           Binomial Heaps.
+    ///         - Binomial_HeapUnion(BinomialHeap, BinomialHeap)
+    ///                                         : Performs the Union operation on two (2) Binomial Heaps,
+    ///                                           the process requires a HeapMerge in order to then verify 
+    ///                                           the correctness of the new structure by continually linking
+    ///                                           BinomialNodes of the same degree to form trees of a higher
+    ///                                           degree. The process repeats until there is, at most, a 
+    ///                                           single node with a particular degree.
+    ///         - getDegree()                   : Traverses a Binomial Heap to find the structure with the 
+    ///                                           maximum degree.
+    ///         - Min_Degree(BinomialHeap, BinomialHeap)
+    ///                                         : Compares two (2) Binomial Heaps and returns the Binomial Heap
+    ///                                           with the smaller degree.
+    ///         - HeapInsert(BinomialNode)      : Inserts a BinomialNode into a Binomial Heap. Uses the Union operation.
+    ///         - HeapInsert(int[])             : Iteratively inserts an array of keys into a Binomial Heap by 
+    ///                                           means of the HeapInsert(BinomialNode) method. Used for profiling.
+    ///         - HeapInsert(int)               : Inserts a single key into a Binomial Heap. Used for profiling.
+    ///         - print()                       : Visualization of the Binomial Heap for debugging purposes.
+    ///                                           Note: Currently in a pre-alpha implementation.
     /// </summary>
-    /// <typeparam name="T">Generic data type for the node storage.</typeparam>
+    /// <typeparam name="T">Generic data type for node storage.</typeparam>
     class BinomialHeap<T>   where T : IComparable
     {
+        /// <summary>
+        /// BinomialNode that contains the data structure to be maintained by the BinomialHeap class. 
+        /// Reffered as the head of the Binomial heap.
+        /// </summary>
         BinomialNode<T> BHeap;
-        static int MinusInf = int.MinValue;
+
+        /// <summary>
+        /// Null reference used to find leafs in the trees.
+        /// </summary>
         public BinomialNode<T> NIL = null;
 
+        /// <summary>
+        /// BinomialHeap()
+        /// 
+        /// Default constructor for the class, it returns an empty data structure.
+        /// </summary>
         public BinomialHeap()
         {
             BHeap = new BinomialNode<T>(NIL);
         }
 
+        /// <summary>
+        /// BinomialHeap(BinomialNode)
+        /// Constructor used for the creation of Binomial Heaps from a BinomialNode 
+        /// structure. Used primerally as a way to generate new objects as return values.
+        /// </summary>
+        /// <param name="root">Node to be used as the head of the Binomial Heap.</param>
         public BinomialHeap(BinomialNode<T> root)
         {
             BHeap = new BinomialNode<T>();
@@ -34,7 +93,41 @@ namespace BinaryHeapProfiler
             BHeap=(new BinomialNode<T>(root.getData(), root.getKey()));
         }
 
-         BinomialHeap<T> Binomial_HeapMerge(BinomialHeap<T> H1, BinomialHeap<T> H2)
+        /// <summary>
+        /// BinomialHeap(BinomialHeap)
+        /// 
+        /// Copy constructor. Used in the same manner as BinomialNode constructor.
+        /// </summary>
+        /// <param name="context">Object to replicate.</param>
+        public BinomialHeap(BinomialHeap<T> context) { this.BHeap = context.BHeap; }
+
+        /// <summary>
+        /// head()
+        /// 
+        /// Returns the first node of the data structure. In a Binomial Heap that is the 
+        /// element with the smallest Degree.
+        /// </summary>
+        /// <returns>BinonialNode that contais the head of the Binomial Heap.</returns>
+        public BinomialNode<T> head() { return BHeap; }
+
+        /// <summary>
+        /// head(BinomialNode)
+        /// 
+        /// Replaces the current head of the Binomial Heap with a new node.
+        /// </summary>
+        /// <param name="context">BinomialNode with the new head of the Binomial Heap.</param>
+        public void head(BinomialNode<T> context) { BHeap = context; }
+
+        /// <summary>
+        /// Binomial_HeapMerge(BinomialHeap, BinomialHeap)
+        /// 
+        /// Merges two (2) Binomial Heaps into a single link-list like structure as a first step in the 
+        /// union of two Binomial Heaps.
+        /// </summary>
+        /// <param name="H1">Binomial Heap to merge.</param>
+        /// <param name="H2">Binomial Heap to merge.</param>
+        /// <returns>Returns a new Binomial Heap that contains a linked list with the concatenation of H1 and H2.</returns>
+        BinomialHeap<T> Binomial_HeapMerge(BinomialHeap<T> H1, BinomialHeap<T> H2)
         {
             // Merge the two Binomial Heaps and prepare them for the UNION operation
             BinomialHeap<T> H = new BinomialHeap<T>();
@@ -78,6 +171,17 @@ namespace BinaryHeapProfiler
             return new BinomialHeap<T>(H);
         }
 
+        /// <summary>
+        /// Binomial_HeapUnion(BinomialHeap, BinomialHeap)
+        /// 
+        /// Performs the Union operation on two (2) Binomial Heaps, the process requires a HeapMerge in order to then 
+        /// verify the correctness of the new structure by continually linking BinomialNodes of the same degree to 
+        /// form trees of a higher degree. The process repeats until there is, at most, a single node with a particular 
+        /// degree.
+        /// </summary>
+        /// <param name="H1">Binomial Heap to perform Union with.</param>
+        /// <param name="H2">Binomial Heap to perform Union with.</param>
+        /// <returns>Binomial Heap with the Union of H1 and H2.</returns>
         public BinomialHeap<T> Binomial_HeapUnion(BinomialHeap<T> H1, BinomialHeap<T> H2)
         {
             BinomialHeap<T> H;
@@ -155,8 +259,12 @@ namespace BinaryHeapProfiler
             return H;
         }
 
-
-
+        /// <summary>
+        /// getDegree()
+        /// 
+        /// Traverses a Binomial Heap to find the structure with the maximum degree.
+        /// </summary>
+        /// <returns>uint with the degree of the Binomial Heap.</returns>
         public uint getDegree()
         {
             BinomialNode<T> context = new BinomialNode<T>(this.head());
@@ -165,6 +273,14 @@ namespace BinaryHeapProfiler
             return context.getDegree();
         }
 
+        /// <summary>
+        /// Min_Degree(BinomialHeap, BinomialHeap)
+        /// 
+        /// Compares two (2) Binomial Heaps and returns the Binomial Heap with the smaller degree.
+        /// </summary>
+        /// <param name="H1">Binomial Heap</param>
+        /// <param name="H2">Binomial Heap</param>
+        /// <returns>Binomial Heap with tha has the lesser degeree betwwen H1 and H2.</returns>
         BinomialHeap<T> Min_Degree(BinomialHeap<T> H1, BinomialHeap<T> H2)
         {
             if (H1.head().getDegree() < H2.head().getDegree())
@@ -178,21 +294,37 @@ namespace BinaryHeapProfiler
                 return H2;
         }
 
-        public BinomialNode<T>     head()                                   { return BHeap;  }
-        public void                head(BinomialNode<T> context)            { BHeap = context; }
-        public                     BinomialHeap(BinomialHeap<T> context)    { this.BHeap = context.BHeap; }
-
+        /// <summary>
+        /// print()
+        /// 
+        /// Visualization of the Binomial Heap for debugging purposes. 
+        /// 
+        /// Note: Currently in a pre-alpha implementation.
+        /// </summary>
         public void print()
         {
             this.head().print();
         }
 
+        /// <summary>
+        /// HeapInsert(BinomialNode)
+        /// 
+        /// Inserts a BinomialNode into a Binomial Heap. Uses the Union operation.
+        /// </summary>
+        /// <param name="x">BinomialNode to insert into the Binomial Heap.</param>
         public void HeapInsert(BinomialNode<T> x)
         {
             BinomialHeap<T> H = new BinomialHeap<T>(x);
             this.head(this.Binomial_HeapUnion(this, H).head());
         }
 
+        /// <summary>
+        /// HeapInsert(int[])
+        /// 
+        /// Iteratively inserts an array of keys into a Binomial Heap by means of the 
+        /// HeapInsert(BinomialNode) method. Used for profiling.
+        /// </summary>
+        /// <param name="keys">int array with a set of keys to add into a Binomial Heap.</param>
         public void HeapInsert(int[] keys)
         {
             var len = keys.Length;
@@ -204,6 +336,12 @@ namespace BinaryHeapProfiler
             
         }
 
+        /// <summary>
+        /// HeapInsert(int)
+        /// 
+        /// Inserts a single key into a Binomial Heap. Used for profiling.
+        /// </summary>
+        /// <param name="key">Key to insert into the Binomial Heap.</param>
         public void HeapInsert(int key)
         {
                 BinomialHeap<T> H = new BinomialHeap<T>(new BinomialNode<T>(key));

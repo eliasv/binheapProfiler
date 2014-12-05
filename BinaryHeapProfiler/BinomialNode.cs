@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace BinaryHeapProfiler
 {
     /// <summary>
-    /// Binomial Heap node Data Structured based on CLRS 3rd Edition
+    /// Binomial Heap node Data Structured based on CLRS 2nd Edition
     ///     Implementation by: Elias V. Beauchamp Rodriguez
     ///                        As a requirement for the course COMP6785
     ///     The Binomial node is used to implement the data structure used for 
@@ -43,6 +43,10 @@ namespace BinaryHeapProfiler
     ///         - IComparable.CompareTo(object obj)
     ///                             : Provides basis for comparing and sorting.
     ///         - print()           : Visualization of the node structure.
+    ///         - bool isNIL()      : Compares the current node to the null reference.
+    ///         - bool Equals(object obj)
+    ///                             : Provides support for comparing two instances of the class
+    ///                               BinomialNode. The purpose is to simpify the code readability.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     class BinomialNode<T> : IComparable
@@ -206,6 +210,13 @@ namespace BinaryHeapProfiler
 
         }
 
+        /// <summary>
+        /// bool Equals(object obj)
+        ///     Provides support for comparing two instances of the class
+        ///     BinomialNode. The purpose is to simpify the code readability.
+        /// </summary>
+        /// <param name="obj">Object to compare to current instance.</param>
+        /// <returns></returns>
         public override bool Equals(object obj)
         {
             if (this == null && obj == null)
@@ -218,6 +229,10 @@ namespace BinaryHeapProfiler
             return this.key == compareTo.key;
         }
 
+        /// <summary>
+        /// bool isNIL()      : Compares the current node to the null reference.
+        /// </summary>
+        /// <returns></returns>
         public bool isNIL()
         {
             if(this==null)
