@@ -146,6 +146,7 @@ namespace BinaryHeapProfiler
                 parent = node.parent;
                 sibling = node.sibling;
                 child = node.child;
+                degree = node.degree;
             }
             else
             {
@@ -221,11 +222,7 @@ namespace BinaryHeapProfiler
         {
             if(this==null)
                 return true;
-            else if(/*this.data.CompareTo(default(T))==0      && 
-                    this.child == null                      &&
-                    this.parent == null                     && 
-                    this.sibling == null                    &&*/
-                    this.key == int.MinValue)
+            else if(this.key == int.MinValue)
                 return true;
             return false;
         }
