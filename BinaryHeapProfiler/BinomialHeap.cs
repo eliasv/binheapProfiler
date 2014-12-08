@@ -350,9 +350,9 @@ namespace BinaryHeapProfiler
             var len = keys.Length;
             if (len < end)
                 throw new IndexOutOfRangeException("Array is shorter than the final sub array element.");
-            for (ulong x = 1; x < (end); x++)
+            for (ulong x = start; x < (end); x++)
             {
-                this.HeapInsert((new BinomialNode<T>((int)keys[x-1])));
+                this.HeapInsert((new BinomialNode<T>((int)keys[x])));
             }
         }
 
