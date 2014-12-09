@@ -498,6 +498,7 @@ namespace BinaryHeapProfiler
                     // of the new set generation.
                     timekeeper.Stop();
                     //    ---------- Stop Timer --------------
+                    /*
                     var loopratio = (((new Random().NextDouble()) - 0.5) * stddev + 0.1);  // Generate a random ratio (≈ r ± stddev/2)
                     var displace = (uint)(new Random().Next(0,(int)(81 * Math.Pow(10, maxPowerN))));
                     uint S1 = displace + (uint)Math.Floor(loopratio * k);
@@ -506,6 +507,8 @@ namespace BinaryHeapProfiler
                     BH1.HeapInsert(Un.data, displace, S1);
                     BH1 = new BinomialHeap<uint>();
                     BH1.HeapInsert(Un.data, S2, k);
+                    */
+                    generateBinomialHeaps(ref BH1, ref BH2, k, ratio, stddev);
                     if(repeats%500==0)
                         Console.Write(working[(int)(repeats/100 ) % working.Length] + "\b");
                     //    --------- Start Timer --------------
@@ -541,6 +544,7 @@ namespace BinaryHeapProfiler
                     // of the new set generation.
                     timekeeper.Stop();
                     //    ---------- Stop Timer --------------
+                    /*
                     var loopratio = (((new Random().NextDouble()) - 0.5) * stddev + 0.9);  // Generate a random ratio (≈ r ± stddev/2)
                     var displace = (uint)(new Random().Next(0, (int)(81 * Math.Pow(10, maxPowerN))));
                     uint S1 = displace + (uint)Math.Floor(loopratio * k);
@@ -549,6 +553,8 @@ namespace BinaryHeapProfiler
                     BH1.HeapInsert(Un.data, displace, S1);
                     BH1 = new BinomialHeap<uint>();
                     BH1.HeapInsert(Un.data, S2, k);
+                    */
+                    generateBinomialHeaps(ref BH1, ref BH2, k, ratio, stddev);
                     if (repeats % 500 == 0)
                         Console.Write(working[(int)(repeats / 100) % working.Length] + "\b");
                     //    --------- Start Timer --------------
@@ -586,6 +592,7 @@ namespace BinaryHeapProfiler
                     // of the new set generation.
                     timekeeper.Stop();
                     //    ---------- Stop Timer --------------
+                    /*
                     var loopratio = (((new Random().NextDouble()) - 0.5) * stddev + 0.5);  // Generate a random ratio (≈ r ± stddev/2)
                     var displace = (uint)(new Random().Next(0, (int)(81 * Math.Pow(10, maxPowerN))));
                     uint S1 = displace + (uint)Math.Floor(loopratio * k);
@@ -594,6 +601,8 @@ namespace BinaryHeapProfiler
                     BH1.HeapInsert(Un.data, displace, S1);
                     BH1 = new BinomialHeap<uint>();
                     BH1.HeapInsert(Un.data, S2, k);
+                    */
+                    generateBinomialHeaps(ref BH1, ref BH2, k, ratio, stddev);
                     if (repeats % 500 == 0)
                         Console.Write(working[(int)(repeats / 100) % working.Length] + "\b");
                     //    --------- Start Timer --------------
